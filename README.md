@@ -4,7 +4,7 @@
 
 ## Summary
 
-Pyolsom is a python binding for [OSLOM](http://www.oslom.org/) graph clustering algorithm.
+Pyolsom is a python binding for [OSLOM](http://www.oslom.org/) (Order Statistics Local Optimization Method) graph clustering algorithm.
 
 It works with directed/undirected weighted and unweighted graph. 
 The algorithm performs usually good but slow, so it is better to be applied to medium graph size. 
@@ -17,7 +17,7 @@ The orginal C++ code is really hard to be refactored. I tried the best to make i
 
 
 ## Requirements
-
+* C++ 17 
 * Python 3
 * scikit-learn>=0.24
 * pybind11>=2.6
@@ -60,7 +60,11 @@ print_clus(results)
 
 ```
 
-For more complete examples please see the notebooks:
+For more complete examples please see the notebook [example.ipynb](notebook/example.ipynb).
 
-[example.ipynb](notebook/example.ipynb)
+![example_clu0.png](example/example_clu0.png)
+![example_clu1.png](example/example_clu1.png)
 
+## License
+The original c++ code is published at [OSLOM](http://www.oslom.org/) following a research publication. However there is no license attached with it. 
+The python wrapping work is licensed under the GPLv2.
