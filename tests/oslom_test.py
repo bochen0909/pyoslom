@@ -5,9 +5,9 @@ Created on Jul 9, 2021
 '''
 import unittest
 import numpy as np
-from oslom import OSLOM  
+from pyoslom import OSLOM  
 from scipy.sparse import csr_matrix, lil_matrix, csc_matrix, coo_matrix
-import oslom
+import pyoslom
 
 
 class Test(unittest.TestCase):
@@ -16,8 +16,8 @@ class Test(unittest.TestCase):
         for k, v in clu.items():
             if k != 'clusters':
                 print(str(k) + "=" + str(v))
-        for l in clu['clusters']:
-            print("#clu=" + str(len(l)) + "\t" + str(l))
+        for k, l in clu['clusters'].items():
+            print("Level:" + str(k) + ", #clu=" + str(len(l)))
             
     def atest_fit_dense(self):
         clustering = OSLOM (random_state=123)

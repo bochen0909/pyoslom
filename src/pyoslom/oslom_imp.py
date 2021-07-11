@@ -29,7 +29,7 @@ class OSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
     
     '''Apply graph clustering by Order Statistics Local Optimization Method
 
-    A wrapper of *OSLOM (Order Statistics Local Optimization Method)* collected from `OSLOM <http://www.oslom.org/index.html>`_
+    A wrapper of *OSLOM (Order Statistics Local Optimization Method)* collected from `OSLOM <http://www.pyoslom.org/index.html>`_
     
     Parameters
     ----------
@@ -133,6 +133,7 @@ class OSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         method = run_dir if self.directed else run_undir
         cwd = os.getcwd()
         with TempDir() as tmp_dir:
+            tmp_dir="/tmp/a"
             edgefile = os.path.join(tmp_dir, "edges.txt")
             nx.write_edgelist(X, edgefile, data=["weight"])
             cmd = self.options + ["-f", "edges.txt"] 

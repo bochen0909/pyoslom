@@ -55,4 +55,6 @@ setup(
     extras_require={"test": "pytest"},
     cmdclass={"build_ext": build_ext},
     zip_safe=False,
+    packages=['pyoslom'],
+    package_dir={'pyoslom': 'src/pyoslom'},
 )
