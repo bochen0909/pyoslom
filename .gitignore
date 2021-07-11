@@ -1,0 +1,6 @@
+.project
+.pydevproject
+build/
+__pycache__
+dist/
+pyfeaca.egg-info/

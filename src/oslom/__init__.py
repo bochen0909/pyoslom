@@ -1,0 +1,1 @@
+from oslom.oslom_imp import OSLOM
