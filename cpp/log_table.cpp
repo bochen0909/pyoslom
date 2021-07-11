@@ -28,7 +28,7 @@ namespace oslom{
 
 void log_fact_table::_set_(int size) {
 
-	cout<<"allocating "<<size<<" factorials..."<<endl;
+	spdout<<"allocating "<<size<<" factorials..."<<"\n";
 	lnf.clear();
 	
 	lnf.reserve(size+1);
@@ -42,7 +42,7 @@ void log_fact_table::_set_(int size) {
 		lnf.push_back(f);
 	}
 	
-	cout<<"done"<<endl;
+	spdout<<"done"<<"\n";
 	//prints(lnf);
 	
 
@@ -54,7 +54,7 @@ void log_fact_table::_set_(int size) {
 
 double log_fact_table::cum_hyper_right(int kin_node, int kout_g, int tm, int degree_node) {
 	
-	//cout<<"kin_node... "<<kin_node<<" "<<kout_g<<" "<<tm<<" "<<degree_node<<endl; 
+	//spdout<<"kin_node... "<<kin_node<<" "<<kout_g<<" "<<tm<<" "<<degree_node<<"\n"; 
 	// this is bigger  or equal p(x >= kin_node)   *** EQUAL ***
 	
 	if(kin_node>min(degree_node, kout_g))
@@ -123,7 +123,7 @@ double log_fact_table::cum_hyper_left(int kin_node, int kout_g, int tm, int degr
 	
 	
 	// this is strictly less  p(x < kin_node)   *** NOT EQUAL ***
-	//cout<<kin_node<<" node: "<<degree_node<<" group: "<<tm<<" "<<degree_node<<endl;
+	//spdout<<kin_node<<" node: "<<degree_node<<" group: "<<tm<<" "<<degree_node<<"\n";
 	
 	
 	if(kin_node<=0)
@@ -146,7 +146,7 @@ double log_fact_table::cum_hyper_left(int kin_node, int kout_g, int tm, int degr
 	int x=kin_node-1;
 	double pzero= hyper(x, kout_g, tm, degree_node);
 	
-	//cout<<"pzero: "<<pzero<<" "<<log_hyper(x, kout_g, tm, degree_node)<<" gsl: "<<(gsl_ran_hypergeometric_pdf(x, kout_g, tm - kout_g,  degree_node))<<endl;
+	//spdout<<"pzero: "<<pzero<<" "<<log_hyper(x, kout_g, tm, degree_node)<<" gsl: "<<(gsl_ran_hypergeometric_pdf(x, kout_g, tm - kout_g,  degree_node))<<"\n";
 	
 	
 	
@@ -164,7 +164,7 @@ double log_fact_table::cum_hyper_left(int kin_node, int kout_g, int tm, int degr
 	double z_zero= 1.;
 	double sum= z_zero;
 	
-	//cout<<"pzero "<<pzero<<" "<<z_zero<<" "<<kin_node<<endl;
+	//spdout<<"pzero "<<pzero<<" "<<z_zero<<" "<<kin_node<<"\n";
 	
 	while(true) {
 	
@@ -173,7 +173,7 @@ double log_fact_table::cum_hyper_left(int kin_node, int kout_g, int tm, int degr
 		
 		z_zero *= (ga + x) / ((degree_node_p - x) *(kout_g_p -x))  * x;
 		--x;
-		//cout<<"zzero sum "<<z_zero<<" "<<sum<<" "<<(ga + x)<<endl;
+		//spdout<<"zzero sum "<<z_zero<<" "<<sum<<" "<<(ga + x)<<"\n";
 		
 		if(z_zero< log_table_pr *sum)
 			break;
@@ -194,7 +194,7 @@ double log_fact_table::cum_binomial_right(int x, int N, double prob) {
 
 	// this is bigger  or equal p(x >= kin_node)   *** EQUAL ***
 	
-	//cout<<"x "<<x<<" N "<<N <<"  prob "<<prob<<endl;
+	//spdout<<"x "<<x<<" N "<<N <<"  prob "<<prob<<"\n";
 	
 	
 	if(x<=0) 
@@ -229,7 +229,7 @@ double log_fact_table::cum_binomial_right(int x, int N, double prob) {
 		
 		z_zero *=  prob * double(N-x) / ((x+1)*(1-prob));
 		x++;
-		//cout<<"zzero sum "<<z_zero<<" "<<sum<<" "<<endl;
+		//spdout<<"zzero sum "<<z_zero<<" "<<sum<<" "<<"\n";
 		
 		if(z_zero< log_table_pr * sum)
 			break;
@@ -285,7 +285,7 @@ double log_fact_table::cum_binomial_left(int x, int N, double prob) {
 		--x;
 		z_zero *=  (1-prob) * double(x+1) / ((N-x) *prob);
 		
-		//cout<<"zzero sum "<<z_zero<<" "<<sum<<" "<<(ga + x)<<endl;
+		//spdout<<"zzero sum "<<z_zero<<" "<<sum<<" "<<(ga + x)<<"\n";
 		
 		if(z_zero< log_table_pr * sum)
 			break;
@@ -306,13 +306,13 @@ double log_fact_table::slow_symmetric_eq(int k1, int k2, int H, int x) {
 	
 	// k1, k2 and k3 are the three colors
 	
-	//cout<<"k3: "<<k3<<endl;
+	//spdout<<"k3: "<<k3<<"\n";
 	
 
 	int l1=max(0, -H);
 	int l2=min(k1, k2);
 	
-	//cout<<"l1: "<<l1<<" l2: "<<l2<<endl;
+	//spdout<<"l1: "<<l1<<" l2: "<<l2<<"\n";
 	
 	
 	if(x<l1)
@@ -325,12 +325,12 @@ double log_fact_table::slow_symmetric_eq(int k1, int k2, int H, int x) {
 	double p=0;
 	for(int ix=l1; ix<=l2; ++ix) {
 		
-		//cout<<ix<<" "<<(log_symmetric_eq(k1, k2, H, ix))<<endl;
+		//spdout<<ix<<" "<<(log_symmetric_eq(k1, k2, H, ix))<<"\n";
 		p+=exp(log_symmetric_eq(k1, k2, H, ix));
 	
 	}
 	
-	//cout<<"p: "<<p<<endl;
+	//spdout<<"p: "<<p<<"\n";
 	
 	
 	
@@ -351,7 +351,7 @@ double log_fact_table::right_cumulative_function(int k1, int k2, int k3, int x){
 		
 	
 	
-	//cout<<"k1 "<<k1<<" "<<k2<<" "<<H<<" "<<x<<" "<<mode<<" "<<2*H+k1+k2<<endl;
+	//spdout<<"k1 "<<k1<<" "<<k2<<" "<<H<<" "<<x<<" "<<mode<<" "<<2*H+k1+k2<<"\n";
 	
 	
 	if(k1>k2)
@@ -398,7 +398,7 @@ double log_fact_table::right_cumulative_function(int k1, int k2, int k3, int x){
 	
 	/*double cum1=exp(log_symmetric_eq(k1, k2, H, l1));
 	double lg0=log_symmetric_eq(k1, k2, H, l1);
-	cout<<"x: "<<l1<<" "<<exp(log_symmetric_eq(k1, k2, H, l1))<<" "<<exp(lg0)<<endl;*/
+	spdout<<"x: "<<l1<<" "<<exp(log_symmetric_eq(k1, k2, H, l1))<<" "<<exp(lg0)<<"\n";*/
 	ri=1;
 	ii=mode+1;
 	//for(double i=mode+1; i<x; i++) 
@@ -414,10 +414,10 @@ double log_fact_table::right_cumulative_function(int k1, int k2, int k3, int x){
 		
 		if(ri<log_table_pr*q1)
 			break;
-		//cout<<ii<<" "<<ratio<<" "<<ri/q1<<" b"<<endl;;
+		//spdout<<ii<<" "<<ratio<<" "<<ri/q1<<" b"<<"\n";;
 		++ii;
 		
-		//cout<<"dx-->: "<<ii<<" "<<exp(log_symmetric_eq(k1, k2, H, ii))<<" "<<exp(lg0) * ri<<" "<<sym_ratio(k1, k2, H, ii+1)<<endl;
+		//spdout<<"dx-->: "<<ii<<" "<<exp(log_symmetric_eq(k1, k2, H, ii))<<" "<<exp(lg0) * ri<<" "<<sym_ratio(k1, k2, H, ii+1)<<"\n";
 
 	}
 	
@@ -435,19 +435,19 @@ double log_fact_table::right_cumulative_function(int k1, int k2, int k3, int x){
 		q2+=ri;
 		if(q2> 1e280)
 			return cum_hyper_right(x, k2, tm, k1);
-		//cout<<ii<<" "<<ratio<<" "<<ri/q2<<" c "<<x<<" "<<q2<<endl;;
+		//spdout<<ii<<" "<<ratio<<" "<<ri/q2<<" c "<<x<<" "<<q2<<"\n";;
 		++ii;
 		if(ri<log_table_pr*q2)
 			break;
 
 		
-		//cout<<"ddx-->: "<<i<<" "<<exp(log_symmetric_eq(k1, k2, H, i))<<" "<<exp(lg0) * ri<<" "<<sym_ratio(k1, k2, H, i+1)<<endl;
+		//spdout<<"ddx-->: "<<i<<" "<<exp(log_symmetric_eq(k1, k2, H, i))<<" "<<exp(lg0) * ri<<" "<<sym_ratio(k1, k2, H, i+1)<<"\n";
 
 	}
 
 
 	
-	/* cout<<"fast q12: "<<q1<<" "<<q2<<endl;*/
+	/* spdout<<"fast q12: "<<q1<<" "<<q2<<"\n";*/
 	
 	return max(q2/(q1+q2), 1e-100);
 	

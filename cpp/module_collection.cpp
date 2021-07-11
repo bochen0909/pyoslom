@@ -124,7 +124,7 @@ void module_collection::print(ostream & outt, deque<int> & netlabels, bool not_h
 		
 		
 		deque<int> & module_nodes= modules[itm->first];
-		outt<<"#module "<<itm->first<<" size: "<<modules[itm->first].size()<<" bs: "<<module_bs[itm->first]<<endl;
+		outt<<"#module "<<itm->first<<" size: "<<modules[itm->first].size()<<" bs: "<<module_bs[itm->first]<<"\n";
 		
 		deque<int> labseq;
 		for(int i=0; i<int(module_nodes.size()); i++) {
@@ -136,7 +136,7 @@ void module_collection::print(ostream & outt, deque<int> & netlabels, bool not_h
 		for(int i=0; i<int(labseq.size()); i++) {
 			outt<<labseq[i]<<" ";
 		}
-		outt<<endl;
+		outt<<"\n";
 		
 		
 
@@ -376,7 +376,7 @@ bool module_collection::erase_first_shell(map<int, deque<int> > & erase_net) {
 	}
 	
 	
-	//cout<<"roots:"<<endl;
+	//spdout<<"roots:"<<"\n";
 	//prints(roots);
 	
 
@@ -508,11 +508,11 @@ void module_collection::sort_modules(deque<int> & module_order) {
 		
 	for(map<int, double >::iterator itm = module_bs.begin(); itm!=module_bs.end(); itm++) {
 		
-		//cout<<modules[itm->first].size()<<" ... "<<endl;
+		//spdout<<modules[itm->first].size()<<" ... "<<"\n";
 		rank_id.insert(make_pair(-double(modules[itm->first].size()) + 1e-2 * itm->second, itm->first));
 	
 	}
-	//cout<<"rank_id"<<endl;
+	//spdout<<"rank_id"<<"\n";
 	//prints(rank_id);
 	for(multimap<double, int >::iterator itm = rank_id.begin(); itm!=rank_id.end(); itm++)
 		module_order.push_back(itm->second);
@@ -541,13 +541,13 @@ bool module_collection::egomodules_to_merge(deque<int> & egom, deque<int> & smal
 	}
 	
 	
-	//cout<<"egomodules_to_merge"<<endl;
+	//spdout<<"egomodules_to_merge"<<"\n";
 	//prints(egom);
 	
 	for(map<int, int>::iterator itm=com_ol.begin(); itm!=com_ol.end(); itm++) {
 		
 		
-		//cout<<" other group "<<itm->second<<endl;
+		//spdout<<" other group "<<itm->second<<"\n";
 		//prints(modules[itm->first]);
 		
 		const UI & other_size= min(modules[itm->first].size(), egom.size());
@@ -565,7 +565,7 @@ void module_collection::merge(DI & c) {
 	DI to_merge;
 	egomodules_to_merge(c, to_merge);
 	
-	//cout<<"module c: "<<endl;
+	//spdout<<"module c: "<<"\n";
 	//prints(c);
 	
 	if(to_merge.size()==0)
@@ -574,7 +574,7 @@ void module_collection::merge(DI & c) {
 		for(UI i=0; i<to_merge.size(); i++) {
 			
 			
-			//cout<<"to_merge"<<endl;
+			//spdout<<"to_merge"<<"\n";
 			//prints(modules[to_merge[i]]);
 			
 			

@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include "standard_package/myout.h"
 #include "wsarray.h"
 
 using namespace std;
@@ -156,8 +157,8 @@ void wsarray::freeze() {
 void prints(wsarray &a) {
 
 	for (int i=0; i<a.size(); i++)
-		cout<<a.l[i]<<"\t"<<a.w[i].first<<" "<<a.w[i].second<<endl;
-	cout<<endl;
+		spdout<<a.l[i]<<"\t"<<a.w[i].first<<" "<<a.w[i].second<<"\n";
+	spdout<<"\n";
 
 	
 
@@ -168,8 +169,8 @@ void prints(wsarray &a) {
 void prints(wsarray &a, ostream & pout) {
 
 	for (int i=0; i<a.size(); i++)
-		cout<<a.l[i]<<"\t"<<a.w[i].first<<" "<<a.w[i].second<<endl;
-	pout<<endl;
+		spdout<<a.l[i]<<"\t"<<a.w[i].first<<" "<<a.w[i].second<<"\n";
+	pout<<"\n";
 
 	
 
@@ -180,8 +181,8 @@ void prints(wsarray &a, ostream & pout) {
 void prints(wsarray *a, ostream & pout) {
 
 	for (int i=0; i<a->size(); i++)
-		cout<<a->l[i]<<"\t"<<a->w[i].first<<" "<<a->w[i].second<<endl;
-	pout<<endl;
+		spdout<<a->l[i]<<"\t"<<a->w[i].first<<" "<<a->w[i].second<<"\n";
+	pout<<"\n";
 
 	
 
@@ -190,7 +191,7 @@ void prints(wsarray *a, ostream & pout) {
 
 void prints(wsarray *a) {
 
-	prints(a, cout);
+	prints(a, spdout);
 	
 }
 

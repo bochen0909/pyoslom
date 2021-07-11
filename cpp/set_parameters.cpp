@@ -9,49 +9,49 @@ namespace oslom{
 void general_program_statement(char * b) {
 	
 	
-	cout<<"USAGE: "<<b<<" -f network.dat -uw(-w)"<<endl<<endl;
-	cout<<"-uw must be used if you want to use the unweighted null model; -w otherwise."<<endl;
-	cout<<"network.dat is the list of edges. Please look at ReadMe.pdf for more details."<<endl;
+	spdout<<"USAGE: "<<b<<" -f network.dat -uw(-w)"<<"\n"<<"\n";
+	spdout<<"-uw must be used if you want to use the unweighted null model; -w otherwise."<<"\n";
+	spdout<<"network.dat is the list of edges. Please look at ReadMe.pdf for more details."<<"\n";
 	
 	
 	
-	cout<<"\n\n\n";
-	cout<<"***************************************************************************************************************************************************"<<endl;
-	cout<<"OPTIONS"<<endl;	
-	cout<<"\n  [-r R]:\t\t\tsets the number of runs for the first hierarchical level, bigger this value, more accurate the output (of course, it takes more). Default value is 10."<<endl;
-	cout<<"\n  [-hr R]:\t\t\tsets the number of runs  for higher hierarchical levels. Default value is 50 (the method should be faster since the aggregated network is usually much smaller)."<<endl;
-	cout<<"\n  [-seed m]:\t\t\tsets m equal to the seed for the random number generator. (instead of reading from time_seed.dat)"<<endl; 
-	cout<<"\n  [-hint filename]:\t\ttakes a partition from filename. The file is expected to have the nodes belonging to the same cluster on the same line."<<endl;
-	cout<<"\n  [-load filename]:\t\ttakes modules from a tp file you already got in a previous run."<<endl;
-	cout<<"\n  [-t T]:\t\t\tsets the threshold equal to T, default value is 0.1"<<endl;
-	cout<<"\n  [-singlet]:\t\t\t finds singletons. If you use this flag, the program generally finds a number of nodes which are not assigned to any module.\n\t\t\t\t";
-	cout<<"the program will assign each node with at least one not homeless neighbor. This only applies to the lowest hierarchical level."<<endl;
-	cout<<"\n  [-cp P]:\t\t\tsets a kind of resolution parameter equal to P. This parameter is used to decide if it is better to take some modules or their union.\n\t\t\t\tDefault value is 0.5. ";
-	cout<<"Bigger value leads to bigger clusters. P must be in the interval (0, 1)."<<endl;
-	cout<<"\n  [-fast]:\t\t\tis equivalent to \"-r 1 -hr 1\" (the fastest possible execution)."<<endl;
-	cout<<"\n  [-infomap runs]:\t\tcalls infomap and uses its output as a starting point. runs is the number of times you want to call infomap."<<endl;
-	cout<<"\n  [-copra runs]:\t\tsame as above using copra."<<endl;
-	cout<<"\n  [-louvain runs]:\t\tsame as above using louvain method."<<endl;
-	cout<<"\n\nPlease look at ReadMe.pdf for a more detailed explanation."<<endl;
+	spdout<<"\n\n\n";
+	spdout<<"***************************************************************************************************************************************************"<<"\n";
+	spdout<<"OPTIONS"<<"\n";	
+	spdout<<"\n  [-r R]:\t\t\tsets the number of runs for the first hierarchical level, bigger this value, more accurate the output (of course, it takes more). Default value is 10."<<"\n";
+	spdout<<"\n  [-hr R]:\t\t\tsets the number of runs  for higher hierarchical levels. Default value is 50 (the method should be faster since the aggregated network is usually much smaller)."<<"\n";
+	spdout<<"\n  [-seed m]:\t\t\tsets m equal to the seed for the random number generator. (instead of reading from time_seed.dat)"<<"\n"; 
+	spdout<<"\n  [-hint filename]:\t\ttakes a partition from filename. The file is expected to have the nodes belonging to the same cluster on the same line."<<"\n";
+	spdout<<"\n  [-load filename]:\t\ttakes modules from a tp file you already got in a previous run."<<"\n";
+	spdout<<"\n  [-t T]:\t\t\tsets the threshold equal to T, default value is 0.1"<<"\n";
+	spdout<<"\n  [-singlet]:\t\t\t finds singletons. If you use this flag, the program generally finds a number of nodes which are not assigned to any module.\n\t\t\t\t";
+	spdout<<"the program will assign each node with at least one not homeless neighbor. This only applies to the lowest hierarchical level."<<"\n";
+	spdout<<"\n  [-cp P]:\t\t\tsets a kind of resolution parameter equal to P. This parameter is used to decide if it is better to take some modules or their union.\n\t\t\t\tDefault value is 0.5. ";
+	spdout<<"Bigger value leads to bigger clusters. P must be in the interval (0, 1)."<<"\n";
+	spdout<<"\n  [-fast]:\t\t\tis equivalent to \"-r 1 -hr 1\" (the fastest possible execution)."<<"\n";
+	spdout<<"\n  [-infomap runs]:\t\tcalls infomap and uses its output as a starting point. runs is the number of times you want to call infomap."<<"\n";
+	spdout<<"\n  [-copra runs]:\t\tsame as above using copra."<<"\n";
+	spdout<<"\n  [-louvain runs]:\t\tsame as above using louvain method."<<"\n";
+	spdout<<"\n\nPlease look at ReadMe.pdf for a more detailed explanation."<<"\n";
 
 
 
-	cout<<"\n\n\n";
-	cout<<"***************************************************************************************************************************************************"<<endl;
-	cout<<"OUTPUT FILES"<<endl<<endl;
+	spdout<<"\n\n\n";
+	spdout<<"***************************************************************************************************************************************************"<<"\n";
+	spdout<<"OUTPUT FILES"<<"\n"<<"\n";
 	
 	
-	cout<<"The program will create a directory called \"[network.dat]_oslo_files\". If the directory is not empty it will cleared, so be careful if you want to save some previous output files.\n"<<endl;
-	cout<<"All the files will be written in this directory. "<<endl;
-	cout<<"The first level partition will be written in a file called \"tp\", the next ";
-	cout<<"hierchical network will be recorded as \"net1\", "<<endl;
-	cout<<"the second level partition will be called \"tp1\" and so on."<<endl;
-	cout<<"For convenience, the first level partition will be also written in a file called \"tp\" located in the same folder where the program is."<<endl;
-	cout<<"***************************************************************************************************************************************************"<<endl;
+	spdout<<"The program will create a directory called \"[network.dat]_oslo_files\". If the directory is not empty it will cleared, so be careful if you want to save some previous output files.\n"<<"\n";
+	spdout<<"All the files will be written in this directory. "<<"\n";
+	spdout<<"The first level partition will be written in a file called \"tp\", the next ";
+	spdout<<"hierchical network will be recorded as \"net1\", "<<"\n";
+	spdout<<"the second level partition will be called \"tp1\" and so on."<<"\n";
+	spdout<<"For convenience, the first level partition will be also written in a file called \"tp\" located in the same folder where the program is."<<"\n";
+	spdout<<"***************************************************************************************************************************************************"<<"\n";
 	
 	
-	cout<<endl<<endl;
-	cout<<"PLEASE LOOK AT ReadMe.pdf for more details. Thanks!"<<endl<<endl<<endl;
+	spdout<<"\n"<<"\n";
+	spdout<<"PLEASE LOOK AT ReadMe.pdf for more details. Thanks!"<<"\n"<<"\n"<<"\n";
 	
 	
 	
@@ -62,9 +62,9 @@ void general_program_statement(char * b) {
 
 void error_statement(char * b) {
 
-	cerr<<"\n\n************************************************************"<<endl;
-	cerr<<"ERROR while reading parameters from command line... Please read program instructions or type: \n"<<b<<endl;
-	cerr<<"************************************************************"<<endl;
+	cerr<<"\n\n************************************************************"<<"\n";
+	cerr<<"ERROR while reading parameters from command line... Please read program instructions or type: \n"<<b<<"\n";
+	cerr<<"************************************************************"<<"\n";
 
 
 }
@@ -78,40 +78,40 @@ Parameters::~Parameters(){};
 void Parameters::print() {
 	
 	
-	cout<<"**************************************"<<endl;
-	cout<<"Threshold:\t\t\t"<<threshold<<endl;
-	cout<<"Network file:\t\t\t"<<file1<<endl;
+	spdout<<"**************************************"<<"\n";
+	spdout<<"Threshold:\t\t\t"<<threshold<<"\n";
+	spdout<<"Network file:\t\t\t"<<file1<<"\n";
 	
 	
 	if(weighted)
-		cout<<"Weighted: yes"<<endl;
+		spdout<<"Weighted: yes"<<"\n";
 	else
-		cout<<"Weighted: no"<<endl;
+		spdout<<"Weighted: no"<<"\n";
 
 	if(fast)
-		cout<<"-fast option selected"<<endl;
+		spdout<<"-fast option selected"<<"\n";
 		
 	if(value)
-		cout<<"Hint from file:\t\t\t"<<file2<<endl;
+		spdout<<"Hint from file:\t\t\t"<<file2<<"\n";
 	if(value_load)
-		cout<<"tp-file:\t\t\t"<<file_load<<endl;
+		spdout<<"tp-file:\t\t\t"<<file_load<<"\n";
 
-	cout<<"First Level Runs:\t\t\t"<<Or<<endl;
-	cout<<"Higher Level Runs:\t\t\t"<<hier_gather_runs<<endl;
-	cout<<"-cp:\t\t\t"<<coverage_percentage_fusion_or_submodules<<endl;
+	spdout<<"First Level Runs:\t\t\t"<<Or<<"\n";
+	spdout<<"Higher Level Runs:\t\t\t"<<hier_gather_runs<<"\n";
+	spdout<<"-cp:\t\t\t"<<coverage_percentage_fusion_or_submodules<<"\n";
 	
 	if(seed_random!=-1)
-		cout<<"Random number generator seed:\t\t\t"<<seed_random<<endl;
+		spdout<<"Random number generator seed:\t\t\t"<<seed_random<<"\n";
 	
 	if(homeless_anyway==false)
-		cout<<"-singlet option selected"<<endl;
+		spdout<<"-singlet option selected"<<"\n";
 	
 	
 	for(UI i=0; i<to_run.size(); i++)
-		cout<<"String to run: ["<<to_run[i]<<"]\t\t\t\t\t\tModule file: ["<<to_run_part[i]<<"]"<<endl;
+		spdout<<"String to run: ["<<to_run[i]<<"]\t\t\t\t\t\tModule file: ["<<to_run_part[i]<<"]"<<"\n";
 	
 	
-	cout<<"**************************************"<<endl<<endl;
+	spdout<<"**************************************"<<"\n"<<"\n";
 	
 	
 	
@@ -126,7 +126,7 @@ bool Parameters::set_flag_and_number(double & number_to_set, int & argct, int ar
 	argct++;
 	if(argct==argc) {
 		
-		cout<<"you didn't set any number for the "<<warning<<endl;
+		spdout<<"you didn't set any number for the "<<warning<<"\n";
 		error_statement(argv[0]);
 		return false;
 	}
@@ -135,7 +135,7 @@ bool Parameters::set_flag_and_number(double & number_to_set, int & argct, int ar
 	double ttt;
 	if(cast_string_to_double(tt, ttt)==false) {
 	
-		cout<<"you didn't set any number for the "<<warning<<endl;	
+		spdout<<"you didn't set any number for the "<<warning<<"\n";	
 		error_statement(argv[0]);
 		return false;
 	}
@@ -143,7 +143,7 @@ bool Parameters::set_flag_and_number(double & number_to_set, int & argct, int ar
 	number_to_set=ttt;
 	
 	if(number_to_set<min_v || number_to_set>max_v) {	
-		cout<<"the "<<warning<<" must be between "<<min_v<<" and "<<max_v<<endl;
+		spdout<<"the "<<warning<<" must be between "<<min_v<<" and "<<max_v<<"\n";
 		error_statement(argv[0]);
 		return false;
 	}
@@ -158,7 +158,7 @@ bool Parameters::set_flag_and_number(int & number_to_set, int & argct, int argc,
 	argct++;
 	if(argct==argc) {
 		
-		cout<<"you didn't set any number for the "<<warning<<endl;
+		spdout<<"you didn't set any number for the "<<warning<<"\n";
 		error_statement(argv[0]);
 		return false;
 	}
@@ -167,7 +167,7 @@ bool Parameters::set_flag_and_number(int & number_to_set, int & argct, int argc,
 	double ttt;
 	if(cast_string_to_double(tt, ttt)==false) {
 	
-		cout<<"you didn't set any number for the "<<warning<<endl;	
+		spdout<<"you didn't set any number for the "<<warning<<"\n";	
 		error_statement(argv[0]);
 		return false;
 	}
@@ -175,7 +175,7 @@ bool Parameters::set_flag_and_number(int & number_to_set, int & argct, int argc,
 	number_to_set=cast_int(ttt);
 	
 	if(number_to_set<min_v || number_to_set>max_v) {	
-		cout<<"the "<<warning<<" must be between "<<min_v<<" and "<<max_v<<endl;
+		spdout<<"the "<<warning<<" must be between "<<min_v<<" and "<<max_v<<"\n";
 		error_statement(argv[0]);
 		return false;
 	}
@@ -282,7 +282,7 @@ bool Parameters::set_flag_and_number_external_program(string program_name, int &
 	argct++;
 	if(argct==argc) {
 		
-		cout<<"you didn't set the number of "<<program_name<<endl;
+		spdout<<"you didn't set the number of "<<program_name<<"\n";
 		
 		error_statement(argv[0]);
 		return false;
@@ -292,7 +292,7 @@ bool Parameters::set_flag_and_number_external_program(string program_name, int &
 	double ttt;
 	if(cast_string_to_double(tt, ttt)==false) {
 	
-		cout<<"you didn't set the number of "<<program_name<<endl;
+		spdout<<"you didn't set the number of "<<program_name<<"\n";
 
 	
 		error_statement(argv[0]);
@@ -303,7 +303,7 @@ bool Parameters::set_flag_and_number_external_program(string program_name, int &
 	
 	if(number_to_set<0) {
 	
-		cout<<" the number of "<<program_name<<" must be positive"<<endl;
+		spdout<<" the number of "<<program_name<<" must be positive"<<"\n";
 
 		error_statement(argv[0]);
 		return false;
@@ -344,7 +344,7 @@ bool Parameters::_set_(int argc, char * argv[]) {
 	while (++argct < argc) {			// input file name
 	
 		
-		cout<<"setting "<<argv[argct]<<endl;
+		spdout<<"setting "<<argv[argct]<<"\n";
 		temp = argv[argct];
 		map<string, int>::iterator itf=command_flags.find(temp);
 		
@@ -446,9 +446,9 @@ bool Parameters::_set_(int argc, char * argv[]) {
 	
 	if(f_set==false) {
 		
-		cerr<<"\n\n************************************************************"<<endl;
-		cout<<"ERROR: you didn't set the file with the network.  Please read program instructions or type: \n"<<argv[0]<<endl;
-		cerr<<"************************************************************"<<endl;
+		cerr<<"\n\n************************************************************"<<"\n";
+		spdout<<"ERROR: you didn't set the file with the network.  Please read program instructions or type: \n"<<argv[0]<<"\n";
+		cerr<<"************************************************************"<<"\n";
 		
 		return false;
 		
@@ -456,9 +456,9 @@ bool Parameters::_set_(int argc, char * argv[]) {
 	
 	if(set_weighted==false) {	
 		
-		cerr<<"\n\n************************************************************"<<endl;
-		cout<<"ERROR: you didn't set the option -w (weighted network) or -uw (unweighted network).  Please read program instructions or type: \n"<<argv[0]<<endl;
-		cerr<<"************************************************************"<<endl;
+		cerr<<"\n\n************************************************************"<<"\n";
+		spdout<<"ERROR: you didn't set the option -w (weighted network) or -uw (unweighted network).  Please read program instructions or type: \n"<<argv[0]<<"\n";
+		cerr<<"************************************************************"<<"\n";
 		
 		return false;
 	}	
@@ -482,7 +482,7 @@ bool Parameters::_set_(int argc, char * argv[]) {
 		
 		char number_r[1000];
 		
-		//cout<<"************** "<<string(argv[0])<<endl;
+		//spdout<<"************** "<<string(argv[0])<<"\n";
 		string pros(argv[0]);
 		
 		if(pros=="./oslom_undir")
@@ -492,7 +492,7 @@ bool Parameters::_set_(int argc, char * argv[]) {
 		
 		string sr(number_r);
 		
-		//cout<<"here "<<endl;
+		//spdout<<"here "<<"\n";
 		to_run.push_back(sr);
 		to_run_part.push_back("infomap.part");
 	

@@ -52,7 +52,7 @@ int main_function(const std::vector<std::string> &args) {
 		ifstream inb(b);
 		if(inb.is_open()==false) {
 			
-			cout<<"File "<<netfile<<" not found"<<endl;
+			spdout<<"File "<<netfile<<" not found"<<"\n";
 			return clean(-1);
 		
 		}	
@@ -66,7 +66,7 @@ int main_function(const std::vector<std::string> &args) {
 	
 	
 	if(luca.size()==0 || luca.stubs()==0) {
-		cerr<<"network empty"<<endl;
+		cerr<<"network empty"<<"\n";
 		return clean(-1);
 	}
 	
@@ -82,7 +82,7 @@ int main_function(const std::vector<std::string> &args) {
 	    fs::remove_all(directory_char);
 	}
 	fs::create_directories(directory_char);
-	cout<<"output files will be written in directory: "<<directory_char<<"_oslo_files"<<endl;
+	spdout<<"output files will be written in directory: "<<directory_char<<"_oslo_files"<<"\n";
 	
 	//luca.draw_with_weight_probability("prob");
 	oslom_level(luca, directory_char);

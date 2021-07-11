@@ -69,7 +69,7 @@ int oslom_net_global::fusion_intersection(set<pair<int, int> > & pairs_to_check,
 	
 	
 	
-	cout<<"pairs to check: "<<pairs_to_check.size()<<endl;
+	spdout<<"pairs to check: "<<pairs_to_check.size()<<"\n";
 	
 	
 	deque<int> new_insertions;
@@ -218,7 +218,7 @@ bool oslom_net_global::decision_fusion_intersection(int ai1, int ai2, deque<int>
 				Mcoll.insert(cg2, bs__2, newi);
 				new_insertions.push_back(newi);
 				
-				//cout<<"pruned module"<<endl;
+				//spdout<<"pruned module"<<"\n";
 				
 				return true;
 				

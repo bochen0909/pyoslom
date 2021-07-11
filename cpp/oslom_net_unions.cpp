@@ -66,12 +66,12 @@ bool oslom_net_global::fusion_module_its_subs(const deque<int> & A, deque<deque<
 		sub_mall.set_partition(its_submodules);
 		
 		/*
-		cout<<"group*************************************************"<<endl;
-		print_id(group, cout);
-		cout<<"A"<<endl;
-		print_id(A, cout);
-		cout<<"fusion_module_its_subs"<<endl;
-		print_id(its_submodules, cout);
+		spdout<<"group*************************************************"<<"\n";
+		print_id(group, spdout);
+		spdout<<"A"<<"\n";
+		print_id(A, spdout);
+		spdout<<"fusion_module_its_subs"<<"\n";
+		print_id(its_submodules, spdout);
 		//*/
 		
 		//------------------------------------ cleaning up submodules --------------------------
@@ -84,7 +84,7 @@ bool oslom_net_global::fusion_module_its_subs(const deque<int> & A, deque<deque<
 			deque<int> grbe;
 			sub_graph_module.CUP_check(its_submodules[i], grbe);
 			deque_to_set_app(grbe, a);
-			//cout<<i<<" cleaned_up: "<<grbe.size()<<" "<<a.size()<<endl;
+			//spdout<<i<<" cleaned_up: "<<grbe.size()<<" "<<a.size()<<"\n";
 				
 			if(a.size()>paras->coverage_percentage_fusion_or_submodules*A.size())
 				return false;
@@ -123,7 +123,7 @@ bool oslom_net_global::fusion_with_empty_A(int_matrix & its_submodules, DI & A, 
 	DI group;
 	from_int_matrix_and_deque_to_deque(its_submodules, A, group);
 
-	//cout<<"trying a module of "<<group.size()<<" nodes"<<endl;
+	//spdout<<"trying a module of "<<group.size()<<" nodes"<<"\n";
 
 	bs=CUP_check(group, A);
 	
@@ -155,13 +155,13 @@ void oslom_net_global::check_existing_unions(module_collection & mall) {
 	/* this function is to check unions of existing modules*/
 	
 	/* sorting from the biggest to the smallest module */
-	/*cout<<"before check_existing_unions"<<endl;
-	print_modules(false, cout, mall);*/
+	/*spdout<<"before check_existing_unions"<<"\n";
+	print_modules(false, spdout, mall);*/
 	
 	deque<int> sm;
 	mall.sort_modules(sm);
 	
-	/*cout<<"sm"<<endl;
+	/*spdout<<"sm"<<"\n";
 	prints(sm);*/
 	
 	
@@ -182,10 +182,10 @@ void oslom_net_global::check_existing_unions(module_collection & mall) {
 			its_submodules.push_back(mall.modules[smaller[j]]);
 		
 		
-		/*cout<<"************************** module to check "<<sm[i]<<" size: "<<mall.modules[sm[i]].size()<<endl;
-		print_id(mall.modules[sm[i]], cout);
-		cout<<"its_submodules"<<endl;
-		print_id(its_submodules, cout);*/
+		/*spdout<<"************************** module to check "<<sm[i]<<" size: "<<mall.modules[sm[i]].size()<<"\n";
+		print_id(mall.modules[sm[i]], spdout);
+		spdout<<"its_submodules"<<"\n";
+		print_id(its_submodules, spdout);*/
 		
 		if(fusion_module_its_subs(mall.modules[sm[i]], its_submodules)) {
 			deque_to_set_app(smaller, modules_to_erase);
@@ -208,8 +208,8 @@ void oslom_net_global::check_existing_unions(module_collection & mall) {
 	
 	
 	mall.compact();
-	/*cout<<"after check_existing_unions --------------------------------------------------------"<<endl;
-	print_modules(false, cout, mall);*/
+	/*spdout<<"after check_existing_unions --------------------------------------------------------"<<"\n";
+	print_modules(false, spdout, mall);*/
 	
 
 }
@@ -223,7 +223,7 @@ bool oslom_net_global::check_fusion_with_gather(module_collection & mall) {
 	/*	this function is used to check if we would like unions of modules 
 		returns true if it merges something	 */
 	
-	cout<<"check unions of modules using community network"<<endl<<endl;
+	spdout<<"check unions of modules using community network"<<"\n"<<"\n";
 	paras->print_flag_subgraph=true;
 	
 	mall.fill_gaps();
@@ -265,7 +265,7 @@ bool oslom_net_global::check_fusion_with_gather(module_collection & mall) {
 	
 	int fused_modules=0;
 	
-	cout<<"possible fusions to check: "<<M_raw.size()<<endl;
+	spdout<<"possible fusions to check: "<<M_raw.size()<<"\n";
 	
 	
 	for(UI i=0; i<M_raw.size(); i++) if(M_raw[i].size()>1) {
@@ -274,7 +274,7 @@ bool oslom_net_global::check_fusion_with_gather(module_collection & mall) {
 		for(UI j=0; j<M_raw[i].size(); j++)
 			ten.push_back(mall.modules[M_raw[i][j]]);		
 		
-		//cout<<"trying fusion # "<<i<<" "<<ten.size()<<" modules to merge"<<endl;
+		//spdout<<"trying fusion # "<<i<<" "<<ten.size()<<" modules to merge"<<"\n";
 		
 		DI grc1;
 		double bs;
@@ -289,7 +289,7 @@ bool oslom_net_global::check_fusion_with_gather(module_collection & mall) {
 		
 		
 		if(i%100==0)
-			cout<<"checked "<<i<<" unions. Fused: "<<fused_modules<<endl;
+			spdout<<"checked "<<i<<" unions. Fused: "<<fused_modules<<"\n";
 		
 		
 	}
@@ -314,7 +314,7 @@ int oslom_net_global::check_unions_and_overlap(module_collection & mall, bool on
 		return 0;
 
 	
-	cout<<"checking similar modules"<<endl<<endl;
+	spdout<<"checking similar modules"<<"\n"<<"\n";
 	check_existing_unions(mall);
 	
 	if(only_similar==false) {
@@ -323,7 +323,7 @@ int oslom_net_global::check_unions_and_overlap(module_collection & mall, bool on
 			check_fusion_with_gather(mall);
 	}
 	
-	cout<<"checking highly intersecting modules"<<endl<<endl;
+	spdout<<"checking highly intersecting modules"<<"\n"<<"\n";
 	check_intersection(mall);
 	mall.compute_inclusions();
 	

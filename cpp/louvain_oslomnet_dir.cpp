@@ -44,7 +44,7 @@ void prints(map_int_om & M) {
 
 	
 	for(map_int_om :: iterator itm = M.begin(); itm!=M.end(); itm++)
-		cout<<"module: "<<itm->first<<"\t\t\t\tnc= "<<itm->second.nc<<"\t ktot_inout= "<<itm->second.ktot_out + itm->second.ktot_in<<"\t kout_in= "<<itm->second.kout_in + itm->second.kout_out<<endl;
+		spdout<<"module: "<<itm->first<<"\t\t\t\tnc= "<<itm->second.nc<<"\t ktot_inout= "<<itm->second.ktot_out + itm->second.ktot_in<<"\t kout_in= "<<itm->second.kout_in + itm->second.kout_out<<"\n";
 
 
 }
@@ -379,7 +379,7 @@ int oslomnet_louvain::collect_raw_groups_once(deque<deque<int> > & P) {
 		
 	
 		if(paras->print_flag_subgraph && iteration%20==0)
-			cout<<"iteration: "<<iteration<<" number of modules: "<<label_module.size()<<endl;
+			spdout<<"iteration: "<<iteration<<" number of modules: "<<label_module.size()<<"\n";
 		
 		++iteration;
 		
@@ -400,7 +400,7 @@ int oslomnet_louvain::collect_raw_groups_once(deque<deque<int> > & P) {
 	set_partition_collected(P);
 	
 	if(paras->print_flag_subgraph)
-		cout<<"collection done "<<endl<<endl<<endl;
+		spdout<<"collection done "<<"\n"<<"\n"<<"\n";
 	
 	
 	label_module.clear();
@@ -442,7 +442,7 @@ int oslomnet_louvain::check_all() {
 		int _ktot= ktot_m(M[i]).first + ktot_m(M[i]).second ;
 		int _kin= kin_m(M[i]);
 		if(print_stuff_oslom_local)
-			cout<<"nc: "<<M[i].size()<<" kout_inout: "<<_ktot - 2* _kin<<" ktot_inout: "<<_ktot<<endl;
+			spdout<<"nc: "<<M[i].size()<<" kout_inout: "<<_ktot - 2* _kin<<" ktot_inout: "<<_ktot<<"\n";
 		two+=sin(M[i].size()) + log( _ktot) + cos(_ktot - 2*_kin);
 
 	
@@ -451,10 +451,10 @@ int oslomnet_louvain::check_all() {
 	
 	cherr(one-two, 1e-6);
 	if(print_stuff_oslom_local)
-		cout<<"one, two: "<<one<<" "<<two<<endl;
+		spdout<<"one, two: "<<one<<" "<<two<<"\n";
 	
 	
-	cout<<"check passed"<<endl;
+	spdout<<"check passed"<<"\n";
 	return 0;
 
 

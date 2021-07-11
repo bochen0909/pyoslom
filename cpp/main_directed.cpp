@@ -76,9 +76,9 @@ log_fact_table* LOG_TABLE =0;
 using namespace oslom::dir;
 void program_statement(char * b) {
 	
-	cout<<"\n\n\n***************************************************************************************************************************************************"<<endl;
+	spdout<<"\n\n\n***************************************************************************************************************************************************"<<"\n";
 
-	cout<<"This program implements the OSLO-method for directed networks"<<endl;
+	spdout<<"This program implements the OSLO-method for directed networks"<<"\n";
 	
 		
 	general_program_statement(b);

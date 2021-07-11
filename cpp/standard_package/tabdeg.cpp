@@ -10,7 +10,7 @@
 #include <ctime>
 #include <iterator>
 #include <algorithm>
-
+#include "myout.h"
 
 
 using namespace std;
@@ -116,7 +116,7 @@ double tabdeg::indegof(int a) {		// return the internal degree of a, 0 if it's n
 void tabdeg::print_nodes(ostream & outb) {
 	
 	for(map<int, muspi::iterator >::iterator itm= nodes_indeg.begin(); itm!=nodes_indeg.end(); itm++)
-		outb<<itm->first<<"\t"<<itm->second->first<<endl;
+		outb<<itm->first<<"\t"<<itm->second->first<<"\n";
 	
 	
 	
@@ -162,22 +162,22 @@ int main() {
 	C.edinsert(10, -1.2);
 	C.edinsert(11, 12.8);
 	
-	cout<<"--------------------"<<endl;
-	C.print_nodes(cout);
+	spdout<<"--------------------"<<"\n";
+	C.print_nodes(spdout);
 	
 	C.erase(11);
 	
-	cout<<"--------------------"<<endl;
-	C.print_nodes(cout);
+	spdout<<"--------------------"<<"\n";
+	C.print_nodes(spdout);
 	
 	
-	cout<<"indegof "<<C.indegof(10)<<endl;
+	spdout<<"indegof "<<C.indegof(10)<<"\n";
 	
-	cout<<"best node "<<C.worst_node()<<endl;
+	spdout<<"best node "<<C.worst_node()<<"\n";
 	int best_node=C.worst_node();
 	C.erase(best_node);
-	cout<<"--------------------"<<endl;
-	C.print_nodes(cout);
+	spdout<<"--------------------"<<"\n";
+	C.print_nodes(spdout);
 
 
 	

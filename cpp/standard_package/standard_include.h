@@ -27,7 +27,7 @@ typedef deque<int> DI;
 typedef deque<deque<int> > int_matrix;
 
 
-
+#include "myout.h"
 
 
 #include "cast.h"

@@ -25,4 +25,8 @@ PYBIND11_MODULE(coslomundir, m)
         "run", &main_function,
         py::arg("args"));
 
+    m.def(
+        "set_verbose", &set_spdlog_verbose,
+        py::arg("b"));        
+
 }

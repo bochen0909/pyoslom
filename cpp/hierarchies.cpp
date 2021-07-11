@@ -71,7 +71,7 @@ void external_program_to_call(string network_file, oslom_net_global_handler & ma
 		
 		if(manipulate_string(paras->to_run[ei], network_file, output_string)==false) {
 			
-			cout<<"In string: "<<paras->to_run[ei]<<", keyword NETx was missing. The string cannot be run"<<endl;
+			spdout<<"In string: "<<paras->to_run[ei]<<", keyword NETx was missing. The string cannot be run"<<"\n";
 		
 		} else {
 			
@@ -81,7 +81,7 @@ void external_program_to_call(string network_file, oslom_net_global_handler & ma
 			char exec_this[2000];
 			cast_string_to_char(output_string, exec_this);
 			
-			cout<<"running "<<exec_this<<endl;
+			spdout<<"running "<<exec_this<<"\n";
 			sy=system(exec_this);
 			
 			module_collection Mcoll(matteo.size());
@@ -138,12 +138,12 @@ void translate_covers(string previous_tp, string new_tp, string short_tp, ostrea
 		for(UI j=0; j<M2[i].size(); j++)
 			deque_to_set_app(M[M2[i][j]], S);
 		
-		outt<<"#module "<<i<<" size: "<<S.size()<<" bs: "<<bs2[i]<<endl;
+		outt<<"#module "<<i<<" size: "<<S.size()<<" bs: "<<bs2[i]<<"\n";
 		
 		for(set<int>:: iterator its=S.begin(); its!=S.end(); its++) {
 			outt<<*its<<" ";
 		}
-		outt<<endl;
+		outt<<"\n";
 		
 		
 		if(S.size()>1) {
@@ -159,10 +159,10 @@ void translate_covers(string previous_tp, string new_tp, string short_tp, ostrea
 	
 	
 	
-	stout<<"number of modules: "<<nmod<<endl;
-	stout<<"number of covered nodes: "<<dim - nhom<<" fraction of homeless nodes: "<<double(nhom)/dim<<endl;
-	stout<<"average number of memberships of covered nodes: "<<double(cov)/(dim - nhom)<<endl;
-	stout<<"average community size: "<<double(cov)/nmod<<endl;
+	stout<<"number of modules: "<<nmod<<"\n";
+	stout<<"number of covered nodes: "<<dim - nhom<<" fraction of homeless nodes: "<<double(nhom)/dim<<"\n";
+	stout<<"average number of memberships of covered nodes: "<<double(cov)/(dim - nhom)<<"\n";
+	stout<<"average community size: "<<double(cov)/nmod<<"\n";
 
 	
 	
@@ -264,7 +264,7 @@ bool write_tp_of_this_level(int level, oslom_net_global_handler & luca, char * d
 	} else if(paras->to_run.size()>0) {
 		
 		
-		cout<<"copying network file to the main folder"<<endl;
+		spdout<<"copying network file to the main folder"<<"\n";
 			
 		char char_to_copy[1000];
 		sprintf(char_to_copy, "cp %s_oslo_files/net%d oslo_network_h", directory_char, level);
@@ -282,8 +282,8 @@ bool write_tp_of_this_level(int level, oslom_net_global_handler & luca, char * d
 	
 	if(level==0) {
 		
-		sprintf(char_to_use, "cp %s_oslo_files/tp tp", directory_char);
-		csy=system(char_to_use);
+		//sprintf(char_to_use, "cp %s_oslo_files/tp tp", directory_char);
+		//csy=system(char_to_use);
 	}
 		
 	/* now we get the clusters from the file */
@@ -346,7 +346,7 @@ bool write_tp_of_this_level(int level, oslom_net_global_handler & luca, char * d
 	
 	if(neigh_weight_s.size()>=(1.-paras->hierarchy_convergence)*previous_dim || neigh_weight_s.size()<=2) {
 		
-		cout<<"hierarchies done ********* "<<endl;
+		spdout<<"hierarchies done ********* "<<"\n";
 		return false;
 	}
 
@@ -368,12 +368,12 @@ void oslom_level(oslom_net_global_handler & luca, char * directory_char) {
 	
 	while(true) {
 
-		cout<<"network:: "<<luca.size()<<" nodes and "<<luca.stubs()<<" stubs;\t average degree = "<<luca.stubs()/luca.size()<<endl;
+		spdout<<"network:: "<<luca.size()<<" nodes and "<<luca.stubs()<<" stubs;\t average degree = "<<luca.stubs()/luca.size()<<"\n";
 		if(level==0)
 			original_dim=luca.size();
 
 
-		cout<<"STARTING! HIERARCHICAL LEVEL: "<<level<<endl;
+		spdout<<"STARTING! HIERARCHICAL LEVEL: "<<level<<"\n";
 		if(write_tp_of_this_level(level, luca, directory_char, original_dim)==false)
 			break;
 		

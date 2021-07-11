@@ -20,9 +20,9 @@ oslom_module::~oslom_module() {
 void prints(map_int_om & M) {
 
 	for (map_int_om::iterator itm = M.begin(); itm != M.end(); itm++)
-		cout << "module: " << itm->first << "\t\t\t\tnc= " << itm->second.nc
+		spdout << "module: " << itm->first << "\t\t\t\tnc= " << itm->second.nc
 				<< "\t ktot= " << itm->second.ktot << "\t kout= "
-				<< itm->second.kout << endl;
+				<< itm->second.kout << "\n";
 
 }
 
@@ -288,8 +288,8 @@ int oslomnet_louvain::collect_raw_groups_once(deque<deque<int> > & P) {
 			single_pass_unweighted();
 
 		if (paras->print_flag_subgraph && iteration % 20 == 0)
-			cout << "iteration: " << iteration << " number of modules: "
-					<< label_module.size() << endl;
+			spdout << "iteration: " << iteration << " number of modules: "
+					<< label_module.size() << "\n";
 
 		++iteration;
 
@@ -311,7 +311,7 @@ int oslomnet_louvain::collect_raw_groups_once(deque<deque<int> > & P) {
 	set_partition_collected(P);
 
 	if (paras->print_flag_subgraph)
-		cout << "collection done " << endl << endl << endl;
+		spdout << "collection done " << "\n" << "\n" << "\n";
 
 	label_module.clear();
 	vertex_label.clear();
@@ -349,7 +349,7 @@ int oslomnet_louvain::collect_raw_groups_once(deque<deque<int> > & P) {
  int _ktot= ktot_m(M[i]);
  int _kin= kin_m(M[i]);
  if(print_stuff_oslom_local)
- cout<<"nc: "<<M[i].size()<<" kout: "<<_ktot - _kin<<" ktot: "<<_ktot<<endl;
+ spdout<<"nc: "<<M[i].size()<<" kout: "<<_ktot - _kin<<" ktot: "<<_ktot<<"\n";
  two+=sin(M[i].size()) + log( _ktot) + cos(_ktot - _kin);
 
 
@@ -358,8 +358,8 @@ int oslomnet_louvain::collect_raw_groups_once(deque<deque<int> > & P) {
 
  cherr(one-two, 1e-6);
  if(print_stuff_oslom_local)
- cout<<"one, two: "<<one<<" "<<two<<endl;
- cout<<"check passed"<<endl;
+ spdout<<"one, two: "<<one<<" "<<two<<"\n";
+ spdout<<"check passed"<<"\n";
  return 0;
 
 

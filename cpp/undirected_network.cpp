@@ -253,7 +253,7 @@ bool static_network::set_graph(string file_name) {
 			cast_string_to_doubles(ins, ds);
 
 			if(ds.size()<2) {
-				cerr<<"From file "<<file_name<<": string not readable "<<ins<<" "<<endl;
+				cerr<<"From file "<<file_name<<": string not readable "<<ins<<" "<<"\n";
 				good_file=false;
 				break;
 			}
@@ -315,11 +315,11 @@ bool static_network::set_graph(string file_name) {
 		while(getline(inb, ins)) if(ins.size()>0 && ins[0]!='#') {
 			
 			
-			//cout<<ins<<endl;
+			//spdout<<ins<<"\n";
 			deque<double> ds;
 			cast_string_to_doubles(ins, ds);
 
-			/*cout<<"ds: ";
+			/*spdout<<"ds: ";
 			prints(ds);*/
 		
 			int innum1=cast_int(ds[0]);
@@ -337,7 +337,7 @@ bool static_network::set_graph(string file_name) {
 				if(paras->weighted==false)  {
 				
 					if(ds[2]>0.99) {
-						//cout<<ds[2]<<"<- "<<endl;
+						//spdout<<ds[2]<<"<- "<<"\n";
 						multiple_l=cast_int(ds[2]);			
 					
 					}
@@ -353,7 +353,7 @@ bool static_network::set_graph(string file_name) {
 						w=ds[2];
 					}
 					else {
-						cerr<<"error: not positive weights"<<endl;
+						cerr<<"error: not positive weights"<<"\n";
 						return false;
 					}
 					//---------------------------------------------
@@ -361,7 +361,7 @@ bool static_network::set_graph(string file_name) {
 					
 					
 					if(ds[3]>0.99) {
-						//cout<<ds[2]<<"<- "<<endl;
+						//spdout<<ds[2]<<"<- "<<"\n";
 						multiple_l=cast_int(ds[3]);			
 					
 					}
@@ -379,7 +379,7 @@ bool static_network::set_graph(string file_name) {
 					if(ds[2]>0)
 						w=ds[2];
 					else {
-						cerr<<"error: not positive weights"<<endl;
+						cerr<<"error: not positive weights"<<"\n";
 						return false;				
 					}
 				} else {
@@ -398,7 +398,7 @@ bool static_network::set_graph(string file_name) {
 			
 			if(new1!=new2 && w>0) {		// no self loops!
 				
-				//cout<<"W: "<<w<<endl;
+				//spdout<<"W: "<<w<<"\n";
 				
 				vertices[new1]->links->push_back(new2, multiple_l, w);
 				vertices[new2]->links->push_back(new1, multiple_l, w);
@@ -420,7 +420,7 @@ bool static_network::set_graph(string file_name) {
 				
 				stub_number_i+=vertices[i]->links->w[j].first;
 				
-				//cout<<"-> "<<vertices[i]->links->w[j].second<<endl;
+				//spdout<<"-> "<<vertices[i]->links->w[j].second<<"\n";
 				strength_i+=vertices[i]->links->w[j].second;
 			
 			
@@ -438,7 +438,7 @@ bool static_network::set_graph(string file_name) {
 
 	}
 	else
-		cerr<<"File corrupted"<<endl;
+		cerr<<"File corrupted"<<"\n";
 	
 	//draw("before_set");
 	if(paras->weighted)
@@ -617,14 +617,14 @@ int static_network::draw(string file_name) {
 			
 			for (int i=0; i<int(vertices.size()); i++)
 				for (int j=0; j<vertices[i]->links->size(); j++) if(vertices[i]->id_num <= vertices[vertices[i]->links->l[j]]->id_num)
-					graph_out<<vertices[i]->id_num<<"\t"<<vertices[vertices[i]->links->l[j]]->id_num<<"\t"<<vertices[i]->original_weights[j]<<"\t"<<vertices[i]->links->w[j].first<<"\t"<<endl;
+					graph_out<<vertices[i]->id_num<<"\t"<<vertices[vertices[i]->links->l[j]]->id_num<<"\t"<<vertices[i]->original_weights[j]<<"\t"<<vertices[i]->links->w[j].first<<"\t"<<"\n";
 		
 		}
 		else {
 			
 			for (int i=0; i<int(vertices.size()); i++)
 				for (int j=0; j<vertices[i]->links->size(); j++) if(vertices[i]->id_num <= vertices[vertices[i]->links->l[j]]->id_num)
-					graph_out<<vertices[i]->id_num<<"\t"<<vertices[vertices[i]->links->l[j]]->id_num<<"\t"<<vertices[i]->links->w[j].first<<endl;
+					graph_out<<vertices[i]->id_num<<"\t"<<vertices[vertices[i]->links->l[j]]->id_num<<"\t"<<vertices[i]->links->w[j].first<<"\n";
 		
 		}
 		
@@ -656,7 +656,7 @@ void static_network::print_id(const deque<int> & a, ostream & pout) {
 	
 	for (int i=0; i<int(a.size()); i++)
 		pout<<vertices[a[i]]->id_num<<"\t";
-	pout<<endl;
+	pout<<"\n";
 
 
 }
@@ -666,7 +666,7 @@ void static_network::print_id(const set<int> & a, ostream & pout) {
 	
 	for (set<int>::iterator its=a.begin(); its!=a.end(); its++)
 		pout<<vertices[*its]->id_num<<"\t";
-	pout<<endl;
+	pout<<"\n";
 
 
 }
@@ -746,7 +746,7 @@ int static_network::translate(deque<deque<int> > & ten) {
 			map<int, int>::iterator itf=A.find(ten[i][j]);
 			if(itf==A.end()) {
 				
-				cerr<<"warning: the nodes in the communities are different from those ones in the network!"<<endl;
+				cerr<<"warning: the nodes in the communities are different from those ones in the network!"<<"\n";
 				//return -1;
 			
 			
@@ -830,7 +830,7 @@ void static_network::set_proper_weights() {
 	
 	
 	if(dim==0) {
-		//cout<<"network empty"<<endl;
+		//spdout<<"network empty"<<"\n";
 		//cherr();
 	} else {
 	
@@ -959,8 +959,8 @@ int static_network::propagate_distances(deque<int> & new_shell, set<int> & alrea
 	
 	
 	/*
-	cout<<"new shell "<<shell<<endl;
-	print_id(next_shell, cout);
+	spdout<<"new shell "<<shell<<"\n";
+	print_id(next_shell, spdout);
 	prints(ML);
 	*/
 	
@@ -1003,18 +1003,18 @@ int static_network::draw_consecutive(string file_name1, string file_name2) {
 	cast_string_to_char(file_name1, b);
 	
 	
-	//cout<<"drawing in file "<<b<<endl;
+	//spdout<<"drawing in file "<<b<<"\n";
 	ofstream graph_out(b);
 	
 	if(paras->weighted)	{
 		for (int i=0; i<int(vertices.size()); i++)
 			for (int j=0; j<vertices[i]->links->size(); j++) if(i < vertices[i]->links->l[j])
-				graph_out<<i<<"\t"<<vertices[i]->links->l[j]<<"\t"<<cast_int(vertices[i]->original_weights[j])<<endl;
+				graph_out<<i<<"\t"<<vertices[i]->links->l[j]<<"\t"<<cast_int(vertices[i]->original_weights[j])<<"\n";
 	} else {
 	
 		for (int i=0; i<int(vertices.size()); i++)
 			for (int j=0; j<vertices[i]->links->size(); j++) if(i < vertices[i]->links->l[j])
-				graph_out<<i<<"\t"<<vertices[i]->links->l[j]<<"\t"<<vertices[i]->links->w[j].first<<endl;
+				graph_out<<i<<"\t"<<vertices[i]->links->l[j]<<"\t"<<vertices[i]->links->w[j].first<<"\n";
 	}
 	
 
@@ -1023,7 +1023,7 @@ int static_network::draw_consecutive(string file_name1, string file_name2) {
 	cast_string_to_char(file_name2, bb);
 	ofstream graph_out2(bb);
 	for (int i=0; i<int(vertices.size()); i++)
-		graph_out2<<i<<" "<<vertices[i]->id_num<<endl;
+		graph_out2<<i<<" "<<vertices[i]->id_num<<"\n";
 
 		
 
@@ -1142,7 +1142,7 @@ int static_network::draw_with_weight_probability(string file_name) {
 		
 		for (UI i=0; i<vertices.size(); i++)
 			for (int j=0; j<vertices[i]->links->size(); j++)
-				graph_out<<vertices[i]->id_num<<"\t"<<vertices[vertices[i]->links->l[j]]->id_num<<"\t"<<vertices[i]->original_weights[j]<<"\t"<<vertices[i]->links->w[j].first<<endl;
+				graph_out<<vertices[i]->id_num<<"\t"<<vertices[vertices[i]->links->l[j]]->id_num<<"\t"<<vertices[i]->original_weights[j]<<"\t"<<vertices[i]->links->w[j].first<<"\n";
 	
 	} 	
 	
@@ -1162,7 +1162,7 @@ void static_network::print_degree_of_homeless(DI & homel, ostream & outt) {
 	for(UI i=0; i<homel.size(); i++)
 		degree_of_homeless.push_back(vertices[homel[i]]->stub_number);
 	
-	outt<<"average degree of homeless nodes: "<<average_func(degree_of_homeless)<<" dev: "<<sqrt(variance_func(degree_of_homeless))<<endl;
+	outt<<"average degree of homeless nodes: "<<average_func(degree_of_homeless)<<" dev: "<<sqrt(variance_func(degree_of_homeless))<<"\n";
 
 
 

@@ -41,7 +41,7 @@ int oslom_net_global::try_to_merge_discarded(int_matrix & discarded, int_matrix 
 		return -1;
 	
 	if(paras->print_flag_subgraph)
-		cout<<"checking unions of not significant modules, modules to check: "<<discarded.size()<<endl;
+		spdout<<"checking unions of not significant modules, modules to check: "<<discarded.size()<<"\n";
 
 	
 	module_collection discarded_modules(dim);
@@ -61,9 +61,9 @@ int oslom_net_global::try_to_merge_discarded(int_matrix & discarded, int_matrix 
 	int_matrix M_raw;		/* M_raw contains the module_id of discarded_modules */
 	community_net.collect_raw_groups_once(M_raw);
 	
-	/*cout<<"community_net partition: "<<endl;
+	/*spdout<<"community_net partition: "<<"\n";
 	printm(M_raw);
-	cout<<"trying unions of discarded modules... "<<endl;*/
+	spdout<<"trying unions of discarded modules... "<<"\n";*/
 	
 	
 	for(int i=0; i<int(M_raw.size()); i++) if(M_raw[i].size()>1) {
@@ -74,8 +74,8 @@ int oslom_net_global::try_to_merge_discarded(int_matrix & discarded, int_matrix 
 		
 		deque<int> _M_i_;
 		set_to_deque(l1, _M_i_);
-		//cout<<"merged discarded: "<<M_raw[i].size()<<endl;
-		//print_id(_M_i_, cout);
+		//spdout<<"merged discarded: "<<M_raw[i].size()<<"\n";
+		//print_id(_M_i_, spdout);
 		
 		
 		deque<int> l;
@@ -117,8 +117,8 @@ void oslom_net_global::get_single_trial_partition(int_matrix & good_modules_to_p
 	//*****************************************************************************
 	collect_raw_groups_once(M);
 	
-	//cout<<"single_gather"<<endl;
-	//print_id(M, cout);
+	//spdout<<"single_gather"<<"\n";
+	//print_id(M, spdout);
 	
 	
 	//*****************************************************************************
@@ -128,11 +128,11 @@ void oslom_net_global::get_single_trial_partition(int_matrix & good_modules_to_p
 	for(UI i=0; i<M.size(); i++) {
 		
 		if(paras->print_flag_subgraph && i%100==0) {
-			cout<<"checked "<<i<<" modules "<<good_modules_to_prune.size()<<" were found significant.  Modules to check: "<<M.size() - i<<". Percentage nodes done: "<<double(total_nodes_tested)/dim<<endl;
+			spdout<<"checked "<<i<<" modules "<<good_modules_to_prune.size()<<" were found significant.  Modules to check: "<<M.size() - i<<". Percentage nodes done: "<<double(total_nodes_tested)/dim<<"\n";
 		}
 		
 		/*if(paras->print_flag_subgraph && M[i].size()>1000)
-			cout<<"M[i].size(): "<<M[i].size()<<endl;*/
+			spdout<<"M[i].size(): "<<M[i].size()<<"\n";*/
 
 		total_nodes_tested+=M[i].size();
 
@@ -154,7 +154,7 @@ void oslom_net_global::get_single_trial_partition(int_matrix & good_modules_to_p
 	
 	
 	if(paras->print_flag_subgraph)
-		cout<<"significance check done "<<endl<<endl<<endl;
+		spdout<<"significance check done "<<"\n"<<"\n"<<"\n";
 
 	
 	
@@ -169,7 +169,7 @@ void oslom_net_global::get_single_trial_partition(int_matrix & good_modules_to_p
 	try_to_merge_discarded(discarded, good_modules_to_prune, new_discarded, bscores_good);
 	
 	if(paras->print_flag_subgraph)
-		cout<<"checking unions of not significant modules done "<<endl<<endl<<endl;
+		spdout<<"checking unions of not significant modules done "<<"\n"<<"\n"<<"\n";
 
 	/* actually here it is also possible to check the new_discarded modules more than twice but I believe this should be enough */
 	/* in principle one could do while(try_to_merge_discarded(...)!=-1) */
@@ -203,15 +203,15 @@ void oslom_net_global::from_matrix_to_module_collection(int_matrix & good_module
 	
 	
 	check_minimality_all(good_modules_to_prune, bscores_good, minimal_modules);
-	cout<<"***************************************************************************"<<endl;
-	cout<<"MINIMALITY CHECK DONE"<<endl;
+	spdout<<"***************************************************************************"<<"\n";
+	spdout<<"MINIMALITY CHECK DONE"<<"\n";
 	
 		
 	
 	
 	check_unions_and_overlap(minimal_modules);
-	cout<<"***************************************************************************"<<endl;
-	cout<<"CHECK UNIONS AND SIMILAR MODULES DONE"<<endl;
+	spdout<<"***************************************************************************"<<"\n";
+	spdout<<"CHECK UNIONS AND SIMILAR MODULES DONE"<<"\n";
 	
 
 }
@@ -230,8 +230,8 @@ void oslom_net_global::get_cover(module_collection & minimal_modules) {
 	
 	
 	single_gather(good_modules_to_prune, bscores_good);	
-	cout<<"***************************************************************************"<<endl;
-	cout<<"COLLECTING SIGNIFICANT MODULES DONE"<<endl<<endl;
+	spdout<<"***************************************************************************"<<"\n";
+	spdout<<"COLLECTING SIGNIFICANT MODULES DONE"<<"\n"<<"\n";
 	
 	from_matrix_to_module_collection(good_modules_to_prune, bscores_good, minimal_modules);
 	
@@ -294,14 +294,14 @@ void oslom_net_global::check_minimality_matrix(int_matrix & A, DD & bss, module_
 
 	
 	if(A.size()>4)
-		cout<<"minimality check: "<<A.size()<<" modules to check, run: "<<counter<<endl;
+		spdout<<"minimality check: "<<A.size()<<" modules to check, run: "<<counter<<"\n";
 
 	if(counter<paras->minimality_stopper) {
 		
 		for(UI i=0; i<A.size(); i++) {
 			
 			/*if(i%100==0)		
-				cout<<"checked: "<<i<<" modules.  Modules to check... "<<A.size() - i<<endl;*/
+				spdout<<"checked: "<<i<<" modules.  Modules to check... "<<A.size() - i<<"\n";*/
 			
 			
 			check_minimality(A[i], bss[i], minimal_modules, suggestion_matrix, suggestion_bs);
@@ -414,14 +414,14 @@ void oslom_net_global::print_modules(bool not_homeless, ostream & out1, module_c
 	for(map<int, double >::iterator itm = Mcoll.module_bs.begin(); itm!=Mcoll.module_bs.end(); itm++) if(Mcoll.modules[itm->first].size() > 1)		
 		nmod++;
 
-	cout<<"******** module_collection ******** "<<nmod<<" modules. writing... "<<endl;
+	spdout<<"******** module_collection ******** "<<nmod<<" modules. writing... "<<"\n";
 			
 	deque<int> netlabs;
 	for(int i=0; i<dim; i++)
 		netlabs.push_back(id_of(i));
 	
 	Mcoll.print(out1, netlabs, not_homeless);
-	cout<<"DONE   ****************************"<<endl;
+	spdout<<"DONE   ****************************"<<"\n";
 	
 
 }
@@ -436,19 +436,19 @@ void oslom_net_global::load(string filename, module_collection & Mall) {
 	// this function is to read a file in the tp-format
 	
 	
-	cout<<"getting partition from tp-file: "<<filename<<endl;
+	spdout<<"getting partition from tp-file: "<<filename<<"\n";
 	deque<double> bss;
 	deque<deque<int> > A;
 	
 	get_partition_from_file_tp_format(filename, A, bss);
 	translate(A);
 	
-	cout<<A.size()<<" groups found"<<endl;
-	cout<<bss.size()<<" bss found"<<endl;
+	spdout<<A.size()<<" groups found"<<"\n";
+	spdout<<bss.size()<<" bss found"<<"\n";
 	
 		
 	for(UI ii=0; ii<A.size(); ii++) {
-		//cout<<"inserting group number "<<ii<<" size: "<<A[ii].size()<<endl;
+		//spdout<<"inserting group number "<<ii<<" size: "<<A[ii].size()<<"\n";
 		Mall.insert(A[ii], bss[ii]);
 		
 	}
@@ -475,7 +475,7 @@ void oslom_net_global::get_covers(string cover_file, int & soft_partitions_writt
 
 	for(int i=0; i<gruns; i++) {
 		
-		cout<<"***************************************************************** RUN: #"<<i+1<<endl;
+		spdout<<"***************************************************************** RUN: #"<<i+1<<"\n";
 
 		module_collection Mcoll(dim);
 		get_cover(Mcoll);
@@ -519,14 +519,14 @@ void oslom_net_global::get_covers(string cover_file, int & soft_partitions_writt
 void oslom_net_global::ultimate_cover(string cover_file, int soft_partitions_written, string final_cover_file) {
 
 
-	cout<<"pruning all the modules collected. Partitions found: "<<soft_partitions_written<<endl;
+	spdout<<"pruning all the modules collected. Partitions found: "<<soft_partitions_written<<"\n";
 	module_collection Mall(dim);
 	load(cover_file, Mall);
 	
 	if(soft_partitions_written>1)
 		check_unions_and_overlap(Mall, true);
 	
-	cout<<"checking homeless nodes"<<endl;
+	spdout<<"checking homeless nodes"<<"\n";
 	if(paras->homeless_anyway==false) {
 		try_to_assign_homeless(Mall, false);
 	} else {
@@ -538,7 +538,7 @@ void oslom_net_global::ultimate_cover(string cover_file, int soft_partitions_wri
 		
 		while(homel.size()>0) {
 			
-			cout<<"assigning homeless nodes. Homeless at this point: "<<before_procedure<<endl;
+			spdout<<"assigning homeless nodes. Homeless at this point: "<<before_procedure<<"\n";
 			
 			try_to_assign_homeless(Mall, true);
 			Mall.homeless(homel);
@@ -552,7 +552,7 @@ void oslom_net_global::ultimate_cover(string cover_file, int soft_partitions_wri
 	
 	
 	Mall.fill_gaps();
-	cout<<"writing final solution in file "<<final_cover_file<<endl;
+	spdout<<"writing final solution in file "<<final_cover_file<<"\n";
 	print_modules(false, final_cover_file, Mall);				// homeless nodes printed
 
 
@@ -568,20 +568,20 @@ void oslom_net_global::hint(module_collection & minimal_modules, string filename
 	deque<double> bscores_good;
 
 	
-	cout<<"getting partition from file: "<<filename<<endl;
+	spdout<<"getting partition from file: "<<filename<<"\n";
 	int_matrix A;
 	
 	get_partition_from_file(filename, A);
 	
 	translate(A);
 
-	cout<<A.size()<<" groups found"<<endl;
+	spdout<<A.size()<<" groups found"<<"\n";
 		
 	for(int ii=0; ii<int(A.size()); ii++) {
 
 		deque<int> group;
 		
-		cout<<"processing group number "<<ii<<" size: "<<A[ii].size()<<endl;
+		spdout<<"processing group number "<<ii<<" size: "<<A[ii].size()<<"\n";
 
 		double bcu=CUP_both(A[ii], group);
 		
@@ -590,13 +590,13 @@ void oslom_net_global::hint(module_collection & minimal_modules, string filename
 			bscores_good.push_back(bcu);
 		}
 		else
-			cout<<"bad group"<<endl;
+			spdout<<"bad group"<<"\n";
 		
 		
 	}
 	
 	
-	cout<<"***************************************************************************"<<endl;
+	spdout<<"***************************************************************************"<<"\n";
 	from_matrix_to_module_collection(good_modules_to_prune, bscores_good, minimal_modules);
 	
 	
@@ -625,12 +625,12 @@ void oslom_net_global::print_statistics(ostream & outt, module_collection & Mcol
 	
 	
 	
-	outt<<"number of modules: "<<nmod<<endl;
-	outt<<"number of covered nodes: "<<dim - homel.size()<<" fraction of homeless nodes: "<<double(homel.size())/dim<<endl;
-	outt<<"average number of memberships of covered nodes: "<<double(cov)/(dim - homel.size())<<endl;
+	outt<<"number of modules: "<<nmod<<"\n";
+	outt<<"number of covered nodes: "<<dim - homel.size()<<" fraction of homeless nodes: "<<double(homel.size())/dim<<"\n";
+	outt<<"average number of memberships of covered nodes: "<<double(cov)/(dim - homel.size())<<"\n";
 	
 	
-	outt<<"average community size: "<<double(cov)/nmod<<endl;
+	outt<<"average community size: "<<double(cov)/nmod<<"\n";
 	
 	print_degree_of_homeless(homel, outt);
 	

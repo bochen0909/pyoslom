@@ -34,7 +34,7 @@ int oslom_net_global::try_to_assign_homeless(module_collection & module_coll, bo
 			deque<int> grbe;
 			double bs=CUP_check(union_deque, grbe);
 			
-			//cout<<"union_deque after "<<itm->first<<" size: "<<grbe.size()<<endl;
+			//spdout<<"union_deque after "<<itm->first<<" size: "<<grbe.size()<<"\n";
 			
 			
 			if(grbe.size()>1) {

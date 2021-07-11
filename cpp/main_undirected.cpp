@@ -63,7 +63,7 @@ double prog_right_cumulative_function(log_fact_table* self,int k1, int k2, int t
 	if(mode>k2)
 		mode=k2;
 	
-	//cout<<"mode: "<<mode<<endl;
+	//spdout<<"mode: "<<mode<<"\n";
 	if(x<mode)
 		return self->cum_hyper_right(x, k2, tm, k1);
 	
@@ -108,9 +108,9 @@ using namespace oslom::undir;
 
 void program_statement(char * b) {
 	
-	cout<<"\n\n\n***************************************************************************************************************************************************"<<endl;
+	spdout<<"\n\n\n***************************************************************************************************************************************************"<<"\n";
 
-	cout<<"This program implements the OSLO-method for undirected networks"<<endl;
+	spdout<<"This program implements the OSLO-method for undirected networks"<<"\n";
 	
 		
 	general_program_statement(b);

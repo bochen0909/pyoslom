@@ -249,7 +249,7 @@ double oslomnet_evaluate::cup_on_list(cup_data_struct & a, deque<int> & gr_clean
 	int until=-1;								// until tells how many nodes should be included into the cluster - actually the number of good nodes are (until +1)
 	double probability_a, probability_b;		// these are the two extremes of a possible good node I could have found
 	double c_min=1;								// this is the score we give to the border we are evaluating here
-	//cout<<"critical_xi: "<<critical_xi<<" --------------------------------------- "<<neighs.size()<<" cgroup "<<cgroup.size()<<endl<<endl<<endl;
+	//spdout<<"critical_xi: "<<critical_xi<<" --------------------------------------- "<<neighs.size()<<" cgroup "<<cgroup.size()<<"\n"<<"\n"<<"\n";
 	
 	cup_data_struct :: iterator itl=a.begin();
 	
@@ -259,7 +259,7 @@ double oslomnet_evaluate::cup_on_list(cup_data_struct & a, deque<int> & gr_clean
 		
 		double c_pos=order_statistics_left_cumulative(Nstar, pos, itl->first);
 		
-		//cout<<"position .... "<<pos<<" "<<order_statistics_left_cumulative(Nstar, pos, itl->first + itl->second.second)<<" >>AAA<< "<<Nstar<<" +++ "<<itl->first + itl->second.second<<" "<<itl->first - itl->second.second<<endl;
+		//spdout<<"position .... "<<pos<<" "<<order_statistics_left_cumulative(Nstar, pos, itl->first + itl->second.second)<<" >>AAA<< "<<Nstar<<" +++ "<<itl->first + itl->second.second<<" "<<itl->first - itl->second.second<<"\n";
 		c_min=min(c_pos, c_min);
 		
 		if(c_pos<critical_xi) {		
@@ -676,7 +676,7 @@ double oslomnet_evaluate::group_inflation(const deque<int> & _c_, deque<int> & g
 	}
 	/* preliminary check */
 		
-	//cout<<"group inflating... "<<endl;
+	//spdout<<"group inflating... "<<"\n";
 	weighted_tabdeg _c_tab_c;
 	weighted_tabdeg _c_tab_n;
 	int kin_cgroup_c;
@@ -722,7 +722,7 @@ double oslomnet_evaluate::group_inflation(const deque<int> & _c_, deque<int> & g
 			initialize_for_evaluation(gr_cleaned, previous_tab_c, previous_tab_n, kin_cgroup_prev, ktot_cgroup_prev);
 			bscore=CUP_runs(previous_tab_c, previous_tab_n, kin_cgroup_prev, ktot_cgroup_prev, gr_cleaned, true, paras->clean_up_runs);
 			
-			//cout<<"exiting... "<<gr_cleaned.size()<<endl;
+			//spdout<<"exiting... "<<gr_cleaned.size()<<"\n";
 			if(gr_cleaned.size()>0) {
 				return bscore;
 			}
@@ -733,7 +733,7 @@ double oslomnet_evaluate::group_inflation(const deque<int> & _c_, deque<int> & g
 			
 	}
 	
-	//cout<<"bad group"<<endl;
+	//spdout<<"bad group"<<"\n";
 	
 	return 1;
 	
@@ -758,7 +758,7 @@ void oslomnet_evaluate::get_external_scores(weighted_tabdeg& neighs, cup_data_st
 		if(F>max_r) {
 			
 			/*if(only_c == false || previous_tab_c.is_internal(itm->first))		
-				cout<<"no node: "<<vertices[itm->first]->id_num<<"  "<<itm->second.internal_degree<<" / "<< itm->second.degree<<" fitness: "<<F<<endl;*/ 
+				spdout<<"no node: "<<vertices[itm->first]->id_num<<"  "<<itm->second.internal_degree<<" / "<< itm->second.degree<<" fitness: "<<F<<"\n";*/ 
 			
 			counter++;
 			if(counter>num_up_to)
@@ -767,7 +767,7 @@ void oslomnet_evaluate::get_external_scores(weighted_tabdeg& neighs, cup_data_st
 		else {
 			
 			/*if(only_c == false || previous_tab_c.is_internal(itm->first))
-				cout<<"node: "<<"  "<<itm->second.internal_degree<<" / "<< itm->second.degree<<" fitness: "<<F<<" "<<interval<<endl;*/
+				spdout<<"node: "<<"  "<<itm->second.internal_degree<<" / "<< itm->second.degree<<" fitness: "<<F<<" "<<interval<<"\n";*/
 			
 			if(only_c == false || previous_tab_c.is_internal(itm->first))
 				fitness_label_to_sort.insert(make_pair(F, make_pair(itm->first, interval)));

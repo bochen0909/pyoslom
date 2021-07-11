@@ -22,7 +22,7 @@ double compare_r_variables(double a, double b, double c, double d) {
 	// r2 \in (c,d)
 	// compute the probability p(r2<r1)
 	
-	//cout<<a<<" "<<b<<" "<<c<<" "<<d<<endl;
+	//spdout<<a<<" "<<b<<" "<<c<<" "<<d<<"\n";
 	
 	
 	if (c<a)
@@ -176,7 +176,7 @@ double inverse_order_statistics(int sample_dim, int pos, const double  & zerof, 
 
 
 	// this should return the probability that the minimum of the quantiles p(c_min<=xi)
-	//cout<<"-> "<<fitted_exponent(N)<<endl;
+	//spdout<<"-> "<<fitted_exponent(N)<<"\n";
 	
 	return 1 - exp(-fitted_exponent(N)*xi);
 
@@ -221,7 +221,7 @@ void small_simulation(int pos_first, int pos_last, double & A_average, double & 
 	
 	}
 
-	cout<<"counter: "<<counter<<endl;
+	spdout<<"counter: "<<counter<<"\n";
 
 
 
@@ -235,7 +235,7 @@ bool equivalent_check(int pos_first, int pos_last, double & A_average, double & 
 	// returns true is the test was passed
 	
 	/*small_simulation(pos_first, pos_last, A_average, B_average, equivalents, Nstar, critical_xi);
-	cout<<pos_first<<" "<<pos_last<<" A, B "<<A_average<<" "<<B_average<<" "<<equivalents<<" "<<Nstar<<" "<<critical_xi<<endl;*/
+	spdout<<pos_first<<" "<<pos_last<<" A, B "<<A_average<<" "<<B_average<<" "<<equivalents<<" "<<Nstar<<" "<<critical_xi<<"\n";*/
 	
 	int pos=pos_first;
 	double cr_previous=A_average;
@@ -245,7 +245,7 @@ bool equivalent_check(int pos_first, int pos_last, double & A_average, double & 
 		
 		// loop which starts from the best node
 		
-		//cout<<"i... "<<i<<endl;
+		//spdout<<"i... "<<i<<"\n";
 		
 		if(order_statistics_left_cumulative(Nstar, pos, cr_previous)<=critical_xi) {
 						
@@ -254,8 +254,8 @@ bool equivalent_check(int pos_first, int pos_last, double & A_average, double & 
 			
 			
 			double cr=inverse_order_statistics(Nstar, pos, critical_xi, cr_previous, B_average);
-			//cout<<i<<" cr: "<<cr<<" "<<order_statistics_left_cumulative(equivalents, i, (cr-A_average)/(B_average-A_average))<<endl;
-			//cout<<" this,  "<<order_statistics_left_cumulative(Nstar, pos, cr)<<" "<<Nstar<<" "<<pos<<endl;
+			//spdout<<i<<" cr: "<<cr<<" "<<order_statistics_left_cumulative(equivalents, i, (cr-A_average)/(B_average-A_average))<<"\n";
+			//spdout<<" this,  "<<order_statistics_left_cumulative(Nstar, pos, cr)<<" "<<Nstar<<" "<<pos<<"\n";
 			
 			if(order_statistics_left_cumulative(equivalents, i, (cr-A_average)/(B_average-A_average))>0.5)
 				return true;
@@ -298,7 +298,7 @@ bool equivalent_check_gather(cup_data_struct & a, int & until, const double & pr
 			A_average+=itl->first - itl->second.second;
 			B_average+=itl->first + itl->second.second;
 			pos_last=Nstar-nodes_added;			
-			//cout<<"pos_first: "<<pos_first<<" ... "<<pos_last<<endl;
+			//spdout<<"pos_first: "<<pos_first<<" ... "<<pos_last<<"\n";
 		}				
 		++itl;
 	}
@@ -313,12 +313,12 @@ bool equivalent_check_gather(cup_data_struct & a, int & until, const double & pr
 	
 	
 	if(equivalent_check(pos_first, pos_last, A_average, B_average, equivalents, Nstar, critical_xi)==true) {
-		//cout<<"check passed"<<endl;
+		//spdout<<"check passed"<<"\n";
 		return true;
 	}
 	else {
 		until=-1;
-		//cout<<"check not passed"<<endl;
+		//spdout<<"check not passed"<<"\n";
 		return false;
 	}
 
@@ -343,7 +343,7 @@ bool equivalent_check_gather(cup_data_struct & a, int & until, const double & pr
 	double topologic_out =  b2out + boot_interval;
 	
 	
-	//cout<<"compute_topologic_and_bootstrap_interval: "<<kin_node_out<<" "<<kout_g_in<<" "<<tmout<<" "<<degree_node_out<<" "<<boot_interval<<endl;
+	//spdout<<"compute_topologic_and_bootstrap_interval: "<<kin_node_out<<" "<<kout_g_in<<" "<<tmout<<" "<<degree_node_out<<" "<<boot_interval<<"\n";
 	
 	if(topologic_out<=1e-100)
 		topologic_out=1e-100;
@@ -496,10 +496,10 @@ double compute_global_fitness(int kin_node_in, int kout_g_in, int kin_node_out, 
  double compute_topologic_step(int kin_node_out, int kout_g_in, int tmout,  int degree_node_out, const double & _step_) {
 
 	
-	//cout<<"_step_ "<<_step_<<endl;
+	//spdout<<"_step_ "<<_step_<<"\n";
 	double topologic_out =  LOG_TABLE->right_cumulative_function(degree_node_out, kout_g_in, tmout, kin_node_out+1) + _step_ * (hyper_table(kin_node_out, kout_g_in, tmout, degree_node_out));
 	
-	//cout<<"topologic_out: "<<topologic_out<<" "<<(hyper_table(kin_node_out, kout_g_in, tmout, degree_node_out))<<endl;
+	//spdout<<"topologic_out: "<<topologic_out<<" "<<(hyper_table(kin_node_out, kout_g_in, tmout, degree_node_out))<<"\n";
 	
 	if(topologic_out<=1e-100)
 		topologic_out=1e-100;
@@ -583,17 +583,17 @@ double compute_global_fitness_step(int kin_node_in, int kout_g_in, int kin_node_
 
 	double topologic_in= compute_topologic_step(kin_node_in, kout_g_out, tmin, degree_node_in, _step_);
 	
-	//cout<<" minus_log_total_in "<<minus_log_total_in<<" "<<minus_log_total_out<<endl;
+	//spdout<<" minus_log_total_in "<<minus_log_total_in<<" "<<minus_log_total_out<<"\n";
 	double weight_part_in= log_together(minus_log_total_in, kin_node_in);
 	topologic_in /= mu;
 	if(topologic_in>1)
 		topologic_in=1;
 
 	
-	/*cout<<":: "<<weight_part_out<<endl;
-	cout<<"::: "<<topologic_out<<endl;
-	cout<<":: "<<weight_part_in<<endl;
-	cout<<"::: "<<topologic_in<<endl;*/
+	/*spdout<<":: "<<weight_part_out<<"\n";
+	spdout<<"::: "<<topologic_out<<"\n";
+	spdout<<":: "<<weight_part_in<<"\n";
+	spdout<<"::: "<<topologic_in<<"\n";*/
 	
 	double _s_= -log(topologic_out) -log(weight_part_out) -log(topologic_in) -log(weight_part_in);
 		
@@ -619,7 +619,7 @@ double compute_global_fitness_step(int kin_node_in, int kout_g_in, int kin_node_
 										int degree_node_out, double minus_log_total_in, double minus_log_total_out, int number_of_neighs, int Nstar) {
 	
 	
-	//cout<<"kin_node_in "<<kin_node_in<<" "<<kout_g_in<<" "<<kin_node_in<<" "<<kout_g_out<<" "<<tmin<<" "<<tmout<<endl;
+	//spdout<<"kin_node_in "<<kin_node_in<<" "<<kout_g_in<<" "<<kin_node_in<<" "<<kout_g_out<<" "<<tmin<<" "<<tmout<<"\n";
 	
 	return compute_global_fitness_step(kin_node_in, kout_g_in, kin_node_out, kout_g_out, tmin, tmout, degree_node_in, 
 										degree_node_out, minus_log_total_in, minus_log_total_out, number_of_neighs, Nstar, ran4());
@@ -768,11 +768,11 @@ void weighted_tabdeg::set_deque(deque<int> & vv) {
 void weighted_tabdeg::print_nodes(ostream & outb) {
 	
 	
-	cout<<"printing nodes:.. (lab intk mtlw fitness degree) "<<size()<<endl;
+	spdout<<"printing nodes:.. (lab intk mtlw fitness degree) "<<size()<<"\n";
 	
 	for(map<int, facts>::iterator itm= lab_facts.begin(); itm!=lab_facts.end(); itm++)
-		cout<<itm->first<<" "<<"indegrees(in - out):: "<<itm->second.internal_indegree<<" "<<itm->second.internal_outdegree<<" weights "<<
-		itm->second.minus_log_total_wrin<<" "<<itm->second.minus_log_total_wrout<<" "<<(itm->second.fitness_iterator)->first<<" "<<itm->second.indegree<<endl;
+		spdout<<itm->first<<" "<<"indegrees(in - out):: "<<itm->second.internal_indegree<<" "<<itm->second.internal_outdegree<<" weights "<<
+		itm->second.minus_log_total_wrin<<" "<<itm->second.minus_log_total_wrout<<" "<<(itm->second.fitness_iterator)->first<<" "<<itm->second.indegree<<"\n";
 	
 	
 	
@@ -806,11 +806,11 @@ int weighted_tabdeg::worst_node(int & lab, double & worst_fitness, int kout_g_in
 		int kout_g_out_prime= kout_g_out + itm->second.internal_indegree + itm->second.internal_outdegree - itm->second.outdegree;
 		int kout_g_in_prime= kout_g_in + itm->second.internal_indegree + itm->second.internal_outdegree - itm->second.indegree;
 		
-		/*cout<<"Q "<<kout_g_in_prime<<endl;
-		cout<<"QQ "<<kout_g_out_prime<<endl;
-		cout<<"itm->second.internal_indegree "<<itm->second.internal_indegree<<endl;
-		cout<<"itm->second.internal_outdegree "<<itm->second.internal_outdegree<<endl;
-		cout<<"tmin: "<<tmin + itm->second.indegree<<" "<< tmout + itm->second.outdegree<<endl;*/
+		/*spdout<<"Q "<<kout_g_in_prime<<"\n";
+		spdout<<"QQ "<<kout_g_out_prime<<"\n";
+		spdout<<"itm->second.internal_indegree "<<itm->second.internal_indegree<<"\n";
+		spdout<<"itm->second.internal_outdegree "<<itm->second.internal_outdegree<<"\n";
+		spdout<<"tmin: "<<tmin + itm->second.indegree<<" "<< tmout + itm->second.outdegree<<"\n";*/
 		
 		
 		double F= compute_global_fitness_randomized(itm->second.internal_indegree, kout_g_in_prime,	itm->second.internal_outdegree, kout_g_out_prime,
@@ -926,10 +926,10 @@ bool weighted_tabdeg::update_group(int a, int delta_degree_out, int delta_degree
 	if(itm==lab_facts.end())
 		return false;
 	
-	/*cout<<"-->> "<<itm->second.minus_log_total_wrin<<" "<<delta_mtlwin<<endl;
-	cout<<"-->> "<<itm->second.minus_log_total_wrout<<" "<<delta_mtlwout<<endl;
-	cout<<"-->> "<<itm->second.internal_indegree<<" "<<delta_degree_in<<endl;
-	cout<<"-->> "<<itm->second.internal_outdegree<<" "<<delta_degree_out<<endl;*/
+	/*spdout<<"-->> "<<itm->second.minus_log_total_wrin<<" "<<delta_mtlwin<<"\n";
+	spdout<<"-->> "<<itm->second.minus_log_total_wrout<<" "<<delta_mtlwout<<"\n";
+	spdout<<"-->> "<<itm->second.internal_indegree<<" "<<delta_degree_in<<"\n";
+	spdout<<"-->> "<<itm->second.internal_outdegree<<" "<<delta_degree_out<<"\n";*/
 	
 	
 	itm->second.minus_log_total_wrin+=delta_mtlwin;
@@ -947,7 +947,7 @@ bool weighted_tabdeg::update_group(int a, int delta_degree_out, int delta_degree
 	
 	
 	
-	//cout<<"UPdating... group "<<a<<" delta_deg_in "<<delta_degree_in<<" "<<endl;
+	//spdout<<"UPdating... group "<<a<<" delta_deg_in "<<delta_degree_in<<" "<<"\n";
 	
 	
 	
@@ -955,7 +955,7 @@ bool weighted_tabdeg::update_group(int a, int delta_degree_out, int delta_degree
 	int kout_g_out_prime= kout_g_out + itm->second.internal_indegree + itm->second.internal_outdegree - itm->second.outdegree;
 	int kout_g_in_prime= kout_g_in + itm->second.internal_indegree + itm->second.internal_outdegree - itm->second.indegree;
 		
-	//cout<<"cin"<<endl;
+	//spdout<<"cin"<<"\n";
 	double fit= compute_global_fitness_ofive(itm->second.internal_indegree, kout_g_in_prime,	itm->second.internal_outdegree, kout_g_out_prime,
 													tmin + itm->second.indegree, tmout + itm->second.outdegree, itm->second.indegree, itm->second.outdegree,
 													itm->second.minus_log_total_wrin, itm->second.minus_log_total_wrout, nn+1, nstar+1);
@@ -983,7 +983,7 @@ bool weighted_tabdeg::update_neighs(int a, int delta_deg_out, int delta_deg_in, 
 	
 	// this function is to change the internal degree and mtlw of a certain node (to insert it or erase if necessary)
 	
-	//cout<<"UPdating... neighs delta_win "<<delta_win<<" ... "<<delta_wout<<endl;
+	//spdout<<"UPdating... neighs delta_win "<<delta_win<<" ... "<<delta_wout<<"\n";
 
 	map<int, facts>::iterator itm= lab_facts.find(a);
 	if(itm==lab_facts.end()) {
@@ -998,7 +998,7 @@ bool weighted_tabdeg::update_neighs(int a, int delta_deg_out, int delta_deg_in, 
 
 
 	if((itm->second.internal_indegree + itm->second.internal_outdegree)==0) {
-		//cout<<"erased from neigh update "<<a<<endl;
+		//spdout<<"erased from neigh update "<<a<<"\n";
 		erase(a);
 		return true;
 	}
@@ -1008,7 +1008,7 @@ bool weighted_tabdeg::update_neighs(int a, int delta_deg_out, int delta_deg_in, 
 	
 	
 	
-	//cout<<"sei"<<endl;
+	//spdout<<"sei"<<"\n";
 	double fit= compute_global_fitness_ofive(itm->second.internal_indegree, kout_g_in,	itm->second.internal_outdegree, kout_g_out,
 													tmin, tmout, itm->second.indegree, itm->second.outdegree,
 													itm->second.minus_log_total_wrin, itm->second.minus_log_total_wrout, size(), nstar);

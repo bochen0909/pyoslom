@@ -5,7 +5,7 @@ int oslom_net_global::try_to_assign_homeless(module_collection & Mcoll, bool any
 	Mcoll.put_gaps();
 	
 	//if(paras->print_cbs)
-		//cout<<"checking homeless nodes "<<endl;
+		//spdout<<"checking homeless nodes "<<"\n";
 	
 	deque<int> homel;
 	Mcoll.homeless(homel);
@@ -17,8 +17,8 @@ int oslom_net_global::try_to_assign_homeless(module_collection & Mcoll, bool any
 	if(homel.size()==0)
 		return before_procedure;
 	
-	/*cout<<"homel"<<endl;
-	print_id(homel, cout);*/
+	/*spdout<<"homel"<<"\n";
+	print_id(homel, spdout);*/
 	
 	
 	set<int> called;						// modules connected to homeless nodes
@@ -67,13 +67,13 @@ int oslom_net_global::try_to_assign_homeless(module_collection & Mcoll, bool any
 		double cmin=1.1;
 		int belongs_to=-1;
 		
-		//cout<<"homeless node: "<<id_of(itm->first)<<endl;
+		//spdout<<"homeless node: "<<id_of(itm->first)<<"\n";
 		
 		for(set<int>:: iterator its= itm->second.begin(); its!=itm->second.end(); its++) {
 			
 			int kin_node=cast_int(vertices[itm->first]->kplus_m(Mcoll.modules[*its]));
 			
-			/*cout<<"module: "<<*its<<" kin: "<<module_kin[*its]<<"  ktot: "<<module_ktot[*its]<<" kin h "<<kin_node<<endl;
+			/*spdout<<"module: "<<*its<<" kin: "<<module_kin[*its]<<"  ktot: "<<module_ktot[*its]<<" kin h "<<kin_node<<"\n";
 			print_ri(Mcoll.modules[*its]);*/
 			
 			int kout_g= module_ktot[*its] - module_kin[*its];
@@ -85,7 +85,7 @@ int oslom_net_global::try_to_assign_homeless(module_collection & Mcoll, bool any
 			double rh= compute_global_fitness_randomized_short(kin_node, kout_g, tm, vertices[itm->first]->stub_number, kinw);
 			
 			//double cs=  1 - pow(1 - rh, dim - Mcoll.modules[*its].size());
-			//cout<<"rh: "<<rh<<" ..."<<endl;
+			//spdout<<"rh: "<<rh<<" ..."<<"\n";
 			if(rh<cmin) {
 				
 				cmin=rh;
@@ -110,7 +110,7 @@ int oslom_net_global::try_to_assign_homeless(module_collection & Mcoll, bool any
 		
 		
 		//if(paras->print_cbs)
-			//cout<<"homeless node: "<<id_of(itm->first)<<" belongs_to "<<belongs_to<<" cmin... "<<cmin<<endl;
+			//spdout<<"homeless node: "<<id_of(itm->first)<<" belongs_to "<<belongs_to<<" cmin... "<<cmin<<"\n";
 			//cherr();
 		
 		
@@ -118,7 +118,7 @@ int oslom_net_global::try_to_assign_homeless(module_collection & Mcoll, bool any
 	
 	
 	//if(paras->print_cbs)
-		//cout<<"homeless node: "<<homel.size()<<" try_to_assign: "<<homel_module.size()<<" modules to check: "<<to_check.size()<<endl;
+		//spdout<<"homeless node: "<<homel.size()<<" try_to_assign: "<<homel_module.size()<<" modules to check: "<<to_check.size()<<"\n";
 
 	
 	
@@ -146,7 +146,7 @@ int oslom_net_global::try_to_assign_homeless(module_collection & Mcoll, bool any
 			deque<int> grbe;
 			double bs=CUP_check(union_deque, grbe);
 			
-			//cout<<"union_deque after "<<itm->first<<" size: "<<grbe.size()<<endl;
+			//spdout<<"union_deque after "<<itm->first<<" size: "<<grbe.size()<<"\n";
 			
 			
 			if(grbe.size()>1) {

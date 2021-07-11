@@ -106,7 +106,7 @@ void oslomnet_evaluate::erase_cgroup(int wnode) {
 		double fi= compute_global_fitness_ofive(kpin, kout_g_in, kpout, kout_g_out, tmin, tmout, ktin, ktout, mtlwin, mtlwout, neighs.size()+1, dim - cgroup.size() +1);
 		neighs.edinsert(wnode, kpin, kpout, ktin, ktout, mtlwin, mtlwout, fi);
 		
-		//cout<<"node erased: "<<id_of(wnode)<<endl;
+		//spdout<<"node erased: "<<id_of(wnode)<<"\n";
 		cgroup.erase(wnode);
 
 
@@ -266,7 +266,7 @@ void oslomnet_evaluate::insert_cgroup(int wnode) {
 	
 		OPA = vertices[wnode]->outlinks->posweightof(vertices[wnode]->inlinks->l[i]);
 		
-		//cout<<"------> "<<vertices[wnode]->inlinks->w[i].second<<" "<<OPA.second.second<<endl;
+		//spdout<<"------> "<<vertices[wnode]->inlinks->w[i].second<<" "<<OPA.second.second<<"\n";
 		
 		if(cgroup.update_group(vertices[wnode]->inlinks->l[i], vertices[wnode]->inlinks->w[i].first, OPA.second.first, vertices[wnode]->inlinks->w[i].second,  OPA.second.second, 
 					dim - cgroup.size(), neighs.size(), kout_g_in, kout_g_out, tmin, tmout, vertices[vertices[wnode]->inlinks->l[i]]->instub_number, vertices[vertices[wnode]->inlinks->l[i]]->outstub_number,tobe)==false)
@@ -336,7 +336,7 @@ double oslomnet_evaluate::cup_on_list(cup_data_struct & a, deque<int> & gr_clean
 	int until=-1;								// until tells how many nodes should be included into the cluster - actually the number of good nodes are (until +1)
 	double probability_a, probability_b;		// these are the two extremes of a possible good node I could have found
 	double c_min=1;								// this is the score we give to the border we are evaluating here
-	//cout<<"critical_xi: "<<critical_xi<<" --------------------------------------- "<<neighs.size()<<" cgroup "<<cgroup.size()<<endl<<endl<<endl;
+	//spdout<<"critical_xi: "<<critical_xi<<" --------------------------------------- "<<neighs.size()<<" cgroup "<<cgroup.size()<<"\n"<<"\n"<<"\n";
 	
 	cup_data_struct :: iterator itl=a.begin();
 	
@@ -346,7 +346,7 @@ double oslomnet_evaluate::cup_on_list(cup_data_struct & a, deque<int> & gr_clean
 		
 		double c_pos=order_statistics_left_cumulative(Nstar, pos, itl->first);
 		
-		//cout<<"position .... "<<pos<<" "<<order_statistics_left_cumulative(Nstar, pos, itl->first + itl->second.second)<<" >>AAA<< "<<Nstar<<" +++ "<<itl->first + itl->second.second<<" "<<itl->first - itl->second.second<<endl;
+		//spdout<<"position .... "<<pos<<" "<<order_statistics_left_cumulative(Nstar, pos, itl->first + itl->second.second)<<" >>AAA<< "<<Nstar<<" +++ "<<itl->first + itl->second.second<<" "<<itl->first - itl->second.second<<"\n";
 		c_min=min(c_pos, c_min);
 		
 		if(c_pos<critical_xi) {		
@@ -376,7 +376,7 @@ double oslomnet_evaluate::cup_on_list(cup_data_struct & a, deque<int> & gr_clean
 				
 				double probability_to_overtake= compare_r_variables(probability_a, probability_b, itl->first - itl->second.second, itl->first + itl->second.second);
 				
-				//cout<<"probability_to_overtake: "<<probability_to_overtake<<endl;
+				//spdout<<"probability_to_overtake: "<<probability_to_overtake<<"\n";
 				
 							
 				if(probability_to_overtake>0.4999) {		/*preliminary check: this node is basically equivalent to the previous guy, I consider it good*/
@@ -540,7 +540,7 @@ double oslomnet_evaluate::partial_CUP(weighted_tabdeg & previous_tab_c, weighted
 	
 	
 	
-	//previous_tab_c.print_nodes(cout);
+	//previous_tab_c.print_nodes(spdout);
 	
 	
 	
@@ -570,7 +570,7 @@ double oslomnet_evaluate::partial_CUP(weighted_tabdeg & previous_tab_c, weighted
 									dim - cgroup.size(), neighs.size(), maxb_nodes/double(dim-cgroup.size()), max_r_bord, border_group, only_c, previous_tab_c);
 		
 		
-		//cout<<cgroup.size()<<endl;
+		//spdout<<cgroup.size()<<"\n";
 		
 		if(border_group.size()>0)
 			break;
@@ -809,11 +809,11 @@ double oslomnet_evaluate::group_inflation(const deque<int> & _c_, deque<int> & g
 	
 	
 	/* preliminary check */
-	//cout<<"evaluating group of "<<_c_.size()<<" nodes"<<endl;
+	//spdout<<"evaluating group of "<<_c_.size()<<" nodes"<<"\n";
 	double bscore=CUP_iterative(_c_, gr_cleaned);
 	
 	if(gr_cleaned.size()>0) {
-		//cout<<"test passed, bscore: "<<bscore<<"  size: "<<gr_cleaned.size()<<endl;
+		//spdout<<"test passed, bscore: "<<bscore<<"  size: "<<gr_cleaned.size()<<"\n";
 		return bscore;
 	}
 	/* preliminary check */
@@ -823,7 +823,7 @@ double oslomnet_evaluate::group_inflation(const deque<int> & _c_, deque<int> & g
 	int kin_cgroup_c;
 	int ktot_cgroup_c_in, ktot_cgroup_c_out;
 	
-	//print_id(_c_, cout);
+	//print_id(_c_, spdout);
 	initialize_for_evaluation(_c_, _c_tab_c, _c_tab_n, kin_cgroup_c, ktot_cgroup_c_in, ktot_cgroup_c_out);
 	
 
@@ -847,7 +847,7 @@ double oslomnet_evaluate::group_inflation(const deque<int> & _c_, deque<int> & g
 		/*
 		deque<int> hhh;
 		cgroup.set_deque(hhh);
-		print_id(hhh, cout);
+		print_id(hhh, spdout);
 		//*/
 		
 		int changendi=lower_bound(changendi_cum.begin(), changendi_cum.end(), ran4()) - changendi_cum.begin() + 1;
@@ -855,9 +855,9 @@ double oslomnet_evaluate::group_inflation(const deque<int> & _c_, deque<int> & g
 		insertion(changendi);
 		
 		/*
-		cout<<"... after "<<cgroup.size()<<endl;
+		spdout<<"... after "<<cgroup.size()<<"\n";
 		cgroup.set_deque(hhh);
-		print_id(hhh, cout);//*/
+		print_id(hhh, spdout);//*/
 		
 		if(cgroup.size()==dim)
 			return 1;
@@ -881,7 +881,7 @@ double oslomnet_evaluate::group_inflation(const deque<int> & _c_, deque<int> & g
 
 			
 			if(gr_cleaned.size()>0) {
-				//cout<<"test passed, bscore: "<<bscore<<"  size: "<<gr_cleaned.size()<<endl;
+				//spdout<<"test passed, bscore: "<<bscore<<"  size: "<<gr_cleaned.size()<<"\n";
 				return bscore;
 			}
 		}
@@ -914,15 +914,15 @@ void oslomnet_evaluate::get_external_scores(weighted_tabdeg & neighs, cup_data_s
 		
 		
 		/***************************************************************************************
-		cout<<"boring check but somebody ...."<<endl;
-		cout<<"node: "<<vertices[itm->first]->id_num<<endl;
+		spdout<<"boring check but somebody ...."<<"\n";
+		spdout<<"node: "<<vertices[itm->first]->id_num<<"\n";
 		deque<int> hhh;
 		cgroup.set_deque(hhh);
-		cout<<"group"<<endl;
-		print_id(hhh, cout);
+		spdout<<"group"<<"\n";
+		print_id(hhh, spdout);
 		
-		cout<<"ktot_cgroup_in: "<<ktot_cgroup_in<<" ktot_cgroup_out: "<<ktot_cgroup_out<<" kin_cgroup: "<<kin_cgroup<<endl;
-		cout<<"internal in out  "<<itm->second.internal_indegree<<" "<<itm->second.internal_outdegree<<endl;
+		spdout<<"ktot_cgroup_in: "<<ktot_cgroup_in<<" ktot_cgroup_out: "<<ktot_cgroup_out<<" kin_cgroup: "<<kin_cgroup<<"\n";
+		spdout<<"internal in out  "<<itm->second.internal_indegree<<" "<<itm->second.internal_outdegree<<"\n";
 		
 		
 		*-**************************************************************************************/
@@ -931,8 +931,8 @@ void oslomnet_evaluate::get_external_scores(weighted_tabdeg & neighs, cup_data_s
 		double F= compute_global_fitness(itm->second.internal_indegree, kout_g_in, itm->second.internal_outdegree, kout_g_out, tmin, tmout, 
 										itm->second.indegree, itm->second.outdegree, itm->second.minus_log_total_wrin, itm->second.minus_log_total_wrout, nneighs, Nstar, interval);
 		
-		//cout<<"tmin: "<<tmin<<" tmout "<<tmout<<" "<<oneM<<" ... "<<oneM - ktot_cgroup_out<<endl;
-		//cout<<"------------------------------------------------------------------------------------"<<endl;
+		//spdout<<"tmin: "<<tmin<<" tmout "<<tmout<<" "<<oneM<<" ... "<<oneM - ktot_cgroup_out<<"\n";
+		//spdout<<"------------------------------------------------------------------------------------"<<"\n";
 		if(F>max_r) {
 			
 			counter++;
@@ -968,7 +968,7 @@ int oslomnet_evaluate::try_to_assign_homeless_help(module_collection & module_co
 		
 	
 	//if(paras->print_cbs)
-		//cout<<"checking homeless nodes "<<endl;
+		//spdout<<"checking homeless nodes "<<"\n";
 	
 	
 	deque<int> homel;
@@ -980,8 +980,8 @@ int oslomnet_evaluate::try_to_assign_homeless_help(module_collection & module_co
 	if(homel.size()==0)
 		return before_procedure;
 	
-	/*cout<<"homel"<<endl;
-	print_id(homel, cout);*/
+	/*spdout<<"homel"<<"\n";
+	print_id(homel, spdout);*/
 	
 	
 	set<int> called;						// modules connected to homeless nodes
@@ -1049,7 +1049,7 @@ int oslomnet_evaluate::try_to_assign_homeless_help(module_collection & module_co
 		double cmin=1.1;
 		int belongs_to=-1;
 		
-		//cout<<"homeless node: "<<id_of(itm->first)<<endl;
+		//spdout<<"homeless node: "<<id_of(itm->first)<<"\n";
 		
 		for(set<int>:: iterator its= itm->second.begin(); its!=itm->second.end(); its++) {
 			
@@ -1098,7 +1098,7 @@ int oslomnet_evaluate::try_to_assign_homeless_help(module_collection & module_co
 		
 		
 		//if(paras->print_cbs)
-			//cout<<"homeless node: "<<id_of(itm->first)<<" belongs_to "<<belongs_to<<" cmin... "<<cmin<<endl;
+			//spdout<<"homeless node: "<<id_of(itm->first)<<" belongs_to "<<belongs_to<<" cmin... "<<cmin<<"\n";
 			//cherr();
 		
 		
@@ -1106,7 +1106,7 @@ int oslomnet_evaluate::try_to_assign_homeless_help(module_collection & module_co
 	
 	
 	//if(paras->print_cbs)
-		//cout<<"homeless node: "<<homel.size()<<" try_to_assign: "<<homel_module.size()<<" modules to check: "<<to_check.size()<<endl;
+		//spdout<<"homeless node: "<<homel.size()<<" try_to_assign: "<<homel_module.size()<<" modules to check: "<<to_check.size()<<"\n";
 
 	
 	
