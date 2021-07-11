@@ -19,14 +19,14 @@ class Test(unittest.TestCase):
         for k, l in clu['clusters'].items():
             print("Level:" + str(k) + ", #clu=" + str(len(l)))
             
-    def atest_fit_dense(self):
+    def test_fit_dense(self):
         clustering = OSLOM (random_state=123)
         clus = clustering.fit_transform((100 * np.random.random(size=(100, 100))).astype(np.int))
         clus = clustering.fit_transform(np.random.random(size=(100, 100)))
         clus = clustering.fit_transform(np.random.random(size=(100, 100)).astype(np.float32))
         self.print_clu(clus)
 
-    def atest_sparse_matrix(self):
+    def test_sparse_matrix(self):
         
         for cls in [csr_matrix, lil_matrix, csc_matrix, coo_matrix ]:
             X = np.random.random(size=(100, 100));
@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
             clus = obj.fit_transform(A)
             self.print_clu(clus)
             
-    def test_sparse_matrix_directed(self):
+    def est_sparse_matrix_directed(self):
         
         for cls in [csr_matrix]:
             X = np.random.random(size=(100, 100));

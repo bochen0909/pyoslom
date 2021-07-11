@@ -60,7 +60,7 @@ print_clus(results)
 
 ```
 
-For more complete examples please see the notebook [example.ipynb](notebook/example.ipynb).
+For more complete examples please see the notebook [example.ipynb](example/example.ipynb).
 
 ![example_clu0.png](example/example_clu0.png)
 ![example_clu1.png](example/example_clu1.png)

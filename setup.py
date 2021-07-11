@@ -5,7 +5,16 @@ from pybind11.setup_helpers import Pybind11Extension, build_ext
 from pybind11 import get_cmake_dir
 import glob 
 
-__version__ = "0.1.0"
+import unittest
+def my_test_suite():
+    test_loader = unittest.TestLoader()
+    test_suite = test_loader.discover('tests', pattern='*_test.py')
+    return test_suite
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+    
+__version__ = "0.1.1"
 
 cppfiles = glob.glob('cpp/*.cpp') + glob.glob('cpp/*/*.cpp')
 for fname in ['main_directed.cpp', 'main_undirected.cpp', 'oslom_net_check_overlap.cpp', 'main_body.cpp', 'standard_include.cpp', 'try_homeless_dir.cpp', 'oslom_net_unions.cpp', 'try_homeless_undir.cpp']:
@@ -50,10 +59,12 @@ setup(
     author_email="bochen0909@gmail.com",
     url="https://bochen0909@github.com/bochen0909/pyoslom.git",
     description="OSLOM graph clustering algorithm",
-    long_description="",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     ext_modules=ext_modules,
     extras_require={"test": "pytest"},
     cmdclass={"build_ext": build_ext},
+    test_suite='setup.my_test_suite',
     zip_safe=False,
     packages=['pyoslom'],
     package_dir={'pyoslom': 'src/pyoslom'},
