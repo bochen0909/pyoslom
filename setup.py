@@ -6,7 +6,9 @@ from pybind11 import get_cmake_dir
 import glob 
 import unittest
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
+
+is_windows= (os.name == 'nt')
 
 def my_test_suite():
     test_loader = unittest.TestLoader()
@@ -41,12 +43,14 @@ dircppfiles = [u for u in cppfiles if 'oslom_python_undir.cpp' not in u
 print("undir", " ".join(undircppfiles))
 print("dir", " ".join(dircppfiles))
 
+extra_compile_args = ["/O2", '/std:c++17' ] if is_windows else ["-O3", '-std=c++17' ]
+
 ext_modules = [
     Pybind11Extension("coslomundir",
                       undircppfiles,
                       define_macros=[('VERSION_INFO', __version__)],
                       include_dirs=[ 'cpp'],
-                      extra_compile_args=["-O3", '-std=c++17' ],
+                      extra_compile_args=extra_compile_args ,
                       extra_link_args=['-lstdc++fs'],
                       language='c++',
                       ),
@@ -54,7 +58,7 @@ ext_modules = [
                       dircppfiles,
                       define_macros=[('VERSION_INFO', __version__)],
                       include_dirs=[ 'cpp'],
-                      extra_compile_args=["-O3", '-std=c++17' ],
+                      extra_compile_args=extra_compile_args ,
                       extra_link_args=['-lstdc++fs'],
                       language='c++',
                       ),

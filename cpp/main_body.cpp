@@ -1,8 +1,10 @@
 
 
 #include <string.h>
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
+//#include <experimental/filesystem>
+//namespace fs = std::experimental::filesystem;
+#include "filesystem.hpp"
+namespace fs = std::filesystem;
 
 int clean(int retcode)
 {
@@ -20,8 +22,14 @@ int clean(int retcode)
 int main_function(const std::vector<std::string> &args)
 {
 	int argc = (int)args.size();
+
+	#ifdef _WIN32
+	char array[128][4096] = {{0}};
+		#else
 	char array[argc][4096] = {{0}};
-	;
+			#endif
+
+
 	for (int i = 0; i < argc; i++)
 	{
 		strcpy(array[i], args.at(i).c_str());
@@ -50,7 +58,13 @@ int main_function(const std::vector<std::string> &args)
 	string netfile = paras->file1;
 
 	{ /* check if file_name exists */
-		char b[netfile.size() + 1];
+
+		#ifdef _WIN32
+		        char b[4096+1];
+			#else
+			        char b[netfile.size()+1];
+				#endif
+
 		cast_string_to_char(netfile, b);
 		ifstream inb(b);
 		if (inb.is_open() == false)

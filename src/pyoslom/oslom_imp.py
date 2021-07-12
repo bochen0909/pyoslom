@@ -133,7 +133,6 @@ class OSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         method = run_dir if self.directed else run_undir
         cwd = os.getcwd()
         with TempDir() as tmp_dir:
-            tmp_dir="/tmp/a"
             edgefile = os.path.join(tmp_dir, "edges.txt")
             nx.write_edgelist(X, edgefile, data=["weight"])
             cmd = self.options + ["-f", "edges.txt"] 
@@ -151,7 +150,7 @@ class OSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
             outputfiles = glob.glob(os.path.join(tmp_dir, "edges.txt_oslo_files", "tp*"))
             clusters = {}
             for tp in outputfiles:
-                fname = tp.split("/")[-1]
+                fname = os.path.split(tp)[-1]
                 if fname == 'tp':
                     level = 0 
                 else:

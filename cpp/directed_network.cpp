@@ -261,8 +261,11 @@ bool static_network::set_graph(string file_name) {
 	
 	clear();
 	
-	
+#ifdef _WIN32
+	char b[4096+1];
+#else
 	char b[file_name.size()+1];
+#endif
 	cast_string_to_char(file_name, b);
 	
 	
@@ -631,11 +634,15 @@ int static_network::draw_consecutive(string file_name1, string file_name2) {
 
 int static_network::draw(string file_name) {
 	
-	
-
-	int h= file_name.size();
-	
+	int h= file_name.size();	
+#ifdef _WIN32
+	char b[4096+1];
+#else
 	char b[h+1];
+#endif
+	
+	
+	
 	for (int i=0; i<h; i++)
 		b[i]=file_name[i];
 	b[h]='\0';
@@ -682,8 +689,12 @@ int static_network::draw_with_weight_probability(string file_name) {
 	
 
 	int h= file_name.size();
-	
+#ifdef _WIN32
+	char b[4096+1];
+#else
 	char b[h+1];
+#endif	
+
 	for (int i=0; i<h; i++)
 		b[i]=file_name[i];
 	b[h]='\0';

@@ -11,6 +11,10 @@ class SpdlogStream : public std::ostream
     friend SpdlogStream &operator<<(SpdlogStream &out, A &lhs);
 
 public:
+#ifdef _WIN32
+    SpdlogStream():std::ostream(std::cout.rdbuf()){}
+#endif
+
     void log(const std::string &msg)
     {
         spdlog::log(LEVEL, msg);
