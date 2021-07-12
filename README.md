@@ -1,5 +1,5 @@
 
-# Python binding for OSLOM (Order Statistics Local Optimization Method) graph clustering algorithm   
+# Python binding for OSLOM graph clustering algorithm   
 
 
 ## Summary
@@ -27,9 +27,16 @@ The versions are what I worked on. Lower versions may work also.
 
 ## Install
 
+Install pybind11 first because there is no binary release in pip repo and the *setup.py* depends on *pybind11*. 
+
+```bash
+pip install "pybind11>=2.6"
+```
+On Windows  install *Microsoft Visual C++ Build Tool* first (refer to [https://wiki.python.org/moin/WindowsCompilers](https://wiki.python.org/moin/WindowsCompilers)).
+
 ### build from source
 ```bash
-git clone   https://bochen0909@github.com/bochen0909/pyoslom.git && cd pyoslom && python setup.py install
+git clone https://bochen0909@github.com/bochen0909/pyoslom.git && cd pyoslom && python setup.py install
 ```
 
 ### or use pip
