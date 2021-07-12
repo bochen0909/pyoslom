@@ -4,18 +4,26 @@ import sys
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from pybind11 import get_cmake_dir
 import glob 
-
 import unittest
+
+__version__ = "0.1.2"
+
 def my_test_suite():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover('tests', pattern='*_test.py')
     return test_suite
 
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
-    
-__version__ = "0.1.1"
 
+thelibFolder = os.path.dirname(os.path.realpath(__file__))
+requirementPath = thelibFolder + '/requirements.txt'
+install_requires = []  # Examples: ["gunicorn", "docutils>=0.3", "lxml==0.5a7"]
+if os.path.isfile(requirementPath):
+    with open(requirementPath) as f:
+        install_requires = f.read().splitlines()
+            
 cppfiles = glob.glob('cpp/*.cpp') + glob.glob('cpp/*/*.cpp')
 for fname in ['main_directed.cpp', 'main_undirected.cpp', 'oslom_net_check_overlap.cpp', 'main_body.cpp', 'standard_include.cpp', 'try_homeless_dir.cpp', 'oslom_net_unions.cpp', 'try_homeless_undir.cpp']:
     cppfiles = [u for u in cppfiles if fname not in u]
@@ -54,6 +62,8 @@ ext_modules = [
 
 setup(
     name="pyoslom",
+    install_requires=install_requires,
+    scripts=[] ,
     version=__version__,
     author="Bo CHen",
     author_email="bochen0909@gmail.com",
