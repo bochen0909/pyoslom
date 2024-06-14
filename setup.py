@@ -11,7 +11,10 @@ package_data = \
 {'': ['*']}
 
 install_requires = \
-['networkx>=3.3,<4.0', 'pybind11>=2.12.0,<3.0.0', 'scikit-learn>=1.5.0,<2.0.0']
+['networkx>=3.3,<4.0',
+ 'pybind11>=2.12.0,<3.0.0',
+ 'scikit-learn>=1.5.0,<2.0.0',
+ 'wheel>=0.43.0,<0.44.0']
 
 entry_points = \
 {'console_scripts': ['test = scripts:test']}

@@ -76,9 +76,8 @@ def build(setup_kwargs):
             "long_description": long_description,
             "long_description_content_type": "text/markdown",
             "ext_modules": ext_modules,
-            "cmd_class": {"build_ext": build_ext},
+            "cmdclass": {"build_ext": build_ext},
             "zip_safe": False,
-            'packages': ['pyoslom'],
-            'package_dir': {'pyoslom': 'src/pyoslom'},
+            'include_package_data': True,
         }
     )
