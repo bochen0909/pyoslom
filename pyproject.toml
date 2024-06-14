@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "pyoslom"
+version = "0.1.4"
+description = "Python Wrapper for OSLOM"
+authors = ["Bo Chen <bochen0909@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+scikit-learn = "^1.5.0"
+pybind11 = "^2.12.0"
+networkx = "^3.3"
+
+[tool.poetry.build]
+script = "build.py"
+generate-setup-file = true
+
+[build-system]
+requires = [
+    "poetry-core>=1.0.0",
+    "setuptools>=65.4.1",
+    "pybind11>=2.12.0"
+    ]
+build-backend = "poetry.core.masonry.api"
