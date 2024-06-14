@@ -1,85 +1,39 @@
+# -*- coding: utf-8 -*-
 from setuptools import setup
-import os
-import sys
-from pybind11.setup_helpers import Pybind11Extension, build_ext
-from pybind11 import get_cmake_dir
-import glob 
-import unittest
 
-__version__ = "0.1.3"
+package_dir = \
+{'': 'src'}
 
-is_windows= (os.name == 'nt')
+packages = \
+['pyoslom']
 
-def my_test_suite():
-    test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('tests', pattern='*_test.py')
-    return test_suite
+package_data = \
+{'': ['*']}
 
+install_requires = \
+['networkx>=3.3,<4.0', 'pybind11>=2.12.0,<3.0.0', 'scikit-learn>=1.5.0,<2.0.0']
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+entry_points = \
+{'console_scripts': ['test = scripts:test']}
 
-thelibFolder = os.path.dirname(os.path.realpath(__file__))
-requirementPath = thelibFolder + '/requirements.txt'
-install_requires = []  # Examples: ["gunicorn", "docutils>=0.3", "lxml==0.5a7"]
-if os.path.isfile(requirementPath):
-    with open(requirementPath) as f:
-        install_requires = f.read().splitlines()
-            
-cppfiles = glob.glob('cpp/*.cpp') + glob.glob('cpp/*/*.cpp')
-for fname in ['main_directed.cpp', 'main_undirected.cpp', 'oslom_net_check_overlap.cpp', 'main_body.cpp', 'standard_include.cpp', 'try_homeless_dir.cpp', 'oslom_net_unions.cpp', 'try_homeless_undir.cpp']:
-    cppfiles = [u for u in cppfiles if fname not in u]
+setup_kwargs = {
+    'name': 'pyoslom',
+    'version': '0.1.4',
+    'description': 'Python Wrapper for OSLOM',
+    'long_description': '\n# Python binding for OSLOM graph clustering algorithm   \n\n\n## Summary\n\nPyolsom is a python binding for [OSLOM](http://www.oslom.org/) (Order Statistics Local Optimization Method) graph clustering algorithm.\n\nIt works with directed/undirected weighted and unweighted graph. \nThe algorithm performs usually good but slow, so it is better to be applied to medium graph size. \n\nThe orginal C++ code is really hard to be refactored. I tried the best to make it work with python.\n\n### Known issues\n\n* The lib is not thread safe. So use mutliprocess  when parallel is required. \n\n\n## Requirements\n* C++ 17 \n* Python 3\n* scikit-learn>=0.24\n* pybind11>=2.6\n* networkx>=2.5\n\nThe versions are what I worked on. Lower versions may work also.  \n\n## Install\n\nInstall pybind11 first because there is no binary release in pip repo and the *setup.py* depends on *pybind11*. \n\n```bash\npip install "pybind11>=2.6"\n```\nOn Windows  install *Microsoft Visual C++ Build Tool* first (refer to [https://wiki.python.org/moin/WindowsCompilers](https://wiki.python.org/moin/WindowsCompilers)).\n\n### build from source\n```bash\ngit clone https://bochen0909@github.com/bochen0909/pyoslom.git && cd pyoslom && python setup.py install\n```\n\n### or use pip\n```bash\npip install pyoslom\n```\n\n## How to use\n\nExample:\n\n```python\nimport networkx as nx\nfrom pyoslom import OSLOM\n\nG = nx.read_pajek("example.pajek") # networkx graph or adjacency matrix\nalg = OSLOM(random_state=123)\nresults = alg.fit_transform(G)\n\ndef print_clus(clus):\n    for k, v in clus.items():\n        if k != \'clusters\':\n            print(str(k) + "=" + str(v))\n    for k, l in clus[\'clusters\'].items():\n        print("Level:" + str(k) + ", #clu=" + str(len(l)))\n\nprint_clus(results)\n\n```\n\nFor more complete examples please see the notebook [example.ipynb](example/example.ipynb).\n\n![example_clu0.png](example/example_clu0.png)\n![example_clu1.png](example/example_clu1.png)\n\n## License\nThe original c++ code is published at [OSLOM](http://www.oslom.org/) following a research publication. However there is no license attached with it. \nThe python wrapping work is licensed under the GPLv2.\n',
+    'author': 'Bo Chen',
+    'author_email': 'bochen0909@gmail.com',
+    'maintainer': 'None',
+    'maintainer_email': 'None',
+    'url': 'None',
+    'package_dir': package_dir,
+    'packages': packages,
+    'package_data': package_data,
+    'install_requires': install_requires,
+    'entry_points': entry_points,
+    'python_requires': '>=3.10,<4.0',
+}
+from build import *
+build(setup_kwargs)
 
-undircppfiles = [u for u in cppfiles if 'oslom_python_dir.cpp' not in u 
-                and '_dir' not in u 
-                and not os.path.split(u)[-1].startswith("dir")
-                and ('dir_weighted_tabdeg.cpp' not in u or 'undir_weighted_tabdeg.cpp' in u)]
-
-dircppfiles = [u for u in cppfiles if 'oslom_python_undir.cpp' not in u 
-             and '_undir' not in u 
-             and not os.path.split(u)[-1].startswith("undir")
-             and 'undir_weighted_tabdeg.cpp' not in u]
-
-print("undir", " ".join(undircppfiles))
-print("dir", " ".join(dircppfiles))
-
-extra_compile_args = ["/O2", '/std:c++17' ] if is_windows else ["-O3", '-std=c++17' ]
-
-ext_modules = [
-    Pybind11Extension("coslomundir",
-                      undircppfiles,
-                      define_macros=[('VERSION_INFO', __version__)],
-                      include_dirs=[ 'cpp'],
-                      extra_compile_args=extra_compile_args ,
-                      extra_link_args=['-lstdc++fs'],
-                      language='c++',
-                      ),
-    Pybind11Extension("coslomdir",
-                      dircppfiles,
-                      define_macros=[('VERSION_INFO', __version__)],
-                      include_dirs=[ 'cpp'],
-                      extra_compile_args=extra_compile_args ,
-                      extra_link_args=['-lstdc++fs'],
-                      language='c++',
-                      ),
-]
-
-setup(
-    name="pyoslom",
-    install_requires=install_requires,
-    scripts=[] ,
-    version=__version__,
-    author="Bo CHen",
-    author_email="bochen0909@gmail.com",
-    url="https://bochen0909@github.com/bochen0909/pyoslom.git",
-    description="OSLOM graph clustering algorithm",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    ext_modules=ext_modules,
-    extras_require={"test": "pytest"},
-    cmdclass={"build_ext": build_ext},
-    test_suite='setup.my_test_suite',
-    zip_safe=False,
-    packages=['pyoslom'],
-    package_dir={'pyoslom': 'src/pyoslom'},
-)
+setup(**setup_kwargs)

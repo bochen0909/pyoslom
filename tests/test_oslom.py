@@ -21,7 +21,7 @@ class Test(unittest.TestCase):
             
     def test_fit_dense(self):
         clustering = OSLOM (random_state=123)
-        clus = clustering.fit_transform((100 * np.random.random(size=(100, 100))).astype(np.int))
+        clus = clustering.fit_transform((100 * np.random.random(size=(100, 100))).astype(int))
         clus = clustering.fit_transform(np.random.random(size=(100, 100)))
         clus = clustering.fit_transform(np.random.random(size=(100, 100)).astype(np.float32))
         self.print_clu(clus)

@@ -1,3 +1,4 @@
+import glob
 import os
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
@@ -5,6 +6,8 @@ __version__ = "0.1.4"
 
 is_windows = os.name == "nt"
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 def get_cpp_files():
     cppfiles = glob.glob("cpp/*.cpp") + glob.glob("cpp/*/*.cpp")
@@ -69,8 +72,13 @@ def build(setup_kwargs):
     ]
     setup_kwargs.update(
         {
+            "description": "OSLOM graph clustering algorithm",
+            "long_description": long_description,
+            "long_description_content_type": "text/markdown",
             "ext_modules": ext_modules,
             "cmd_class": {"build_ext": build_ext},
             "zip_safe": False,
+            'packages': ['pyoslom'],
+            'package_dir': {'pyoslom': 'src/pyoslom'},
         }
     )

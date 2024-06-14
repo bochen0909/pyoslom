@@ -114,14 +114,14 @@ class OSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
                 raise Exception("must be symmetric matrix")
             if isinstance(X, np.ndarray):
                 if(self.directed):
-                    X = nx.convert_matrix.from_numpy_matrix(X, create_using=nx.DiGraph) 
+                    X = nx.convert_matrix.from_numpy_array(X, create_using=nx.DiGraph) 
                 else:
-                    X = nx.convert_matrix.from_numpy_matrix(X, create_using=nx.Graph)
+                    X = nx.convert_matrix.from_numpy_array(X, create_using=nx.Graph)
             else:
                 if(self.directed):
-                    X = nx.convert_matrix.from_scipy_sparse_matrix(X, create_using=nx.DiGraph) 
+                    X = nx.convert_matrix.from_scipy_sparse_array(X, create_using=nx.DiGraph) 
                 else:
-                    X = nx.convert_matrix.from_scipy_sparse_matrix(X, create_using=nx.Graph)
+                    X = nx.convert_matrix.from_scipy_sparse_array(X, create_using=nx.Graph)
                             
         if isinstance(X, Graph) and not isinstance(X, DiGraph):
             assert not self.directed
