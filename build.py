@@ -3,7 +3,7 @@ import os
 import platform
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 is_windows = platform.system() == "Windows"
 

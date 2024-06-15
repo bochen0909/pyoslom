@@ -1,8 +1,10 @@
 [tool.poetry]
 name = "pyoslom"
-version = "0.1.4"
+version = "0.1.5"
 description = "Python Wrapper for OSLOM"
 authors = ["Bo Chen <bochen0909@gmail.com>"]
+maintainers = ["Bo Chen <bochen0909@gmail.com>"]
+repository = "https://github.com/bochen0909/pyoslom"
 readme = "README.md"
 license = "MIT"
 include = ['cpp']
