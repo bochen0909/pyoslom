@@ -53,7 +53,7 @@ def get_cpp_files():
 
 def build(setup_kwargs):
     undircppfiles, dircppfiles = get_cpp_files()
-    extra_compile_args = ["/std:c++17"] if is_windows else ["-O3", "-std=c++17"]
+    extra_compile_args = ["/std:c++17"] if is_windows else ["-O3", "-std=c++17"] if is_macos else ["-O3", "-std=c++17" "-os macos-10.15"]
 
     ext_modules = [
         Pybind11Extension(
