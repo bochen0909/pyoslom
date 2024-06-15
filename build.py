@@ -5,14 +5,15 @@ from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 __version__ = "0.1.4"
 
-is_windows = platform.system() == 'Windows'
+is_windows = platform.system() == "Windows"
 
-is_macos = platform.system() == 'Darwin'
+is_macos = platform.system() == "Darwin"
 
-is_linux = platform.system() == 'Linux'
+is_linux = platform.system() == "Linux"
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
 
 def get_cpp_files():
     cppfiles = glob.glob("cpp/*.cpp") + glob.glob("cpp/*/*.cpp")
@@ -53,7 +54,15 @@ def get_cpp_files():
 
 def build(setup_kwargs):
     undircppfiles, dircppfiles = get_cpp_files()
-    extra_compile_args = ["/std:c++17"] if is_windows else ["-O3", "-std=c++17", "-mmacosx-version-min=10.15"] if is_macos else ["-O3", "-std=c++17"]
+    extra_compile_args = (
+        ["/std:c++17"]
+        if is_windows
+        else (
+            ["-O3", "-std=c++17", "-mmacosx-version-min=10.15"]
+            if is_macos
+            else ["-O3", "-std=c++17"]
+        )
+    )
 
     ext_modules = [
         Pybind11Extension(
@@ -83,6 +92,6 @@ def build(setup_kwargs):
             "ext_modules": ext_modules,
             "cmdclass": {"build_ext": build_ext},
             "zip_safe": False,
-            'include_package_data': True,
+            "include_package_data": True,
         }
     )
