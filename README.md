@@ -14,11 +14,12 @@ The orginal C++ code is really hard to be refactored. I tried the best to make i
 ### Known issues
 
 * The lib is not thread safe. So use mutliprocess  when parallel is required. 
+* Only works on Linux
 
 
 ## Requirements
 * C++ 17 
-* Python 3
+* Python >= 3.10
 * scikit-learn>=0.24
 * pybind11>=2.6
 * networkx>=2.5
@@ -27,16 +28,21 @@ The versions are what I worked on. Lower versions may work also.
 
 ## Install
 
-Install pybind11 first because there is no binary release in pip repo and the *setup.py* depends on *pybind11*. 
-
+### Use setup.py
 ```bash
-pip install "pybind11>=2.6"
+git clone https://bochen0909@github.com/bochen0909/pyoslom.git
+cd pyoslom 
+pip install -r requirements.txt
+python setup.py install
 ```
-On Windows  install *Microsoft Visual C++ Build Tool* first (refer to [https://wiki.python.org/moin/WindowsCompilers](https://wiki.python.org/moin/WindowsCompilers)).
 
-### build from source
+### Use Poetry
 ```bash
-git clone https://bochen0909@github.com/bochen0909/pyoslom.git && cd pyoslom && python setup.py install
+git clone https://bochen0909@github.com/bochen0909/pyoslom.git
+cd pyoslom 
+poetry install --no-root
+poetry build
+poetry install
 ```
 
 ### or use pip

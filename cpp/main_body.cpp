@@ -24,10 +24,12 @@ int main_function(const std::vector<std::string> &args)
 	int argc = (int)args.size();
 
 	#ifdef _WIN32
-	char array[128][4096] = {{0}};
-		#else
-	char array[argc][4096] = {{0}};
-			#endif
+		char array[128][4096] = {{0}};
+	#elif defined(__APPLE__)
+		char array[128][4096] = {{0}};
+	#else
+		char array[argc][4096] = {{0}};
+	#endif
 
 
 	for (int i = 0; i < argc; i++)

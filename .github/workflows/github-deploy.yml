@@ -2,6 +2,9 @@ name: Build and upload to PyPI
 
 on:
   workflow_dispatch:
+  release:
+    types:
+      - published
 
 jobs:
   build_wheels:
@@ -10,13 +13,21 @@ jobs:
     strategy:
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        #os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.19.1
+        env:
+          CIBW_SKIP: "*-win32 pp* *musllinux* *_i686 cp36-* cp37-* cp38-* cp39-*"
+          CIBW_ARCHS: "auto64"
+          CIBW_BEFORE_BUILD: "pip install -r requirements.txt"
+          CIBW_BEFORE_TEST: "pip install -r requirements.txt"
+          CIBW_TEST_REQUIRES: "pytest"
+          CIBW_TEST_COMMAND: "pytest {project}"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -29,8 +40,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install requirements
+        run: pip install -r requirements.txt
+
       - name: Build sdist
-        run: pipx run build --sdist
+        run: python setup.py sdist
 
       - uses: actions/upload-artifact@v4
         with:
@@ -55,5 +69,5 @@ jobs:
           merge-multiple: true
 
       - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          # To test: repository-url: https://test.pypi.org/legacy/
+        # with:
+        # To test: repository-url: https://test.pypi.org/legacy/
