@@ -1,10 +1,15 @@
 import glob
 import os
+import platform
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 __version__ = "0.1.4"
 
-is_windows = os.name == "nt"
+is_windows = platform.system() == 'Windows'
+
+is_macos = platform.system() == 'Darwin'
+
+is_linux = platform.system() == 'Linux'
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -57,7 +62,7 @@ def build(setup_kwargs):
             define_macros=[("VERSION_INFO", __version__)],
             include_dirs=["cpp"],
             extra_compile_args=extra_compile_args,
-            extra_link_args=["-lstdc++fs"],
+            extra_link_args=["-lstdc++fs"] if is_linux else [],
             language="c++",
         ),
         Pybind11Extension(
@@ -66,7 +71,7 @@ def build(setup_kwargs):
             define_macros=[("VERSION_INFO", __version__)],
             include_dirs=["cpp"],
             extra_compile_args=extra_compile_args,
-            extra_link_args=["-lstdc++fs"],
+            extra_link_args=["-lstdc++fs"] if is_linux else [],
             language="c++",
         ),
     ]
