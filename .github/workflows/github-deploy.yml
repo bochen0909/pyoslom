@@ -17,7 +17,7 @@ jobs:
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
         #os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        os: [ubuntu-latest]
+        os: [windows-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.19.1
         env:
-          CIBW_SKIP: "*-win32 cp36-* cp37-* cp38-* cp39-* cp310-*"
+          CIBW_SKIP: "*-win32 pp3* cp36-* cp37-* cp38-* cp39-*"
           CIBW_BEFORE_BUILD: "pip install -r requirements.txt"
           CIBW_BEFORE_TEST: "pip install -r requirements.txt"
           CIBW_TEST_REQUIRES: "pytest"
