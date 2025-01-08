@@ -1,9 +1,8 @@
 
 
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                               *
  *	This program is free software; you can redistribute it and/or modify         *
  *  it under the terms of the GNU General Public License as published by         *
@@ -26,51 +25,24 @@
  *                                                                               *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
  
+  
 #include "log_table.h"
 #include "standard_package/standard_include.h"
 
 
 
 
-
 using namespace oslom;
 
-double prog_right_cumulative_function(log_fact_table* self,int k1, int k2, int tm, int x) {
+double prog_right_cumulative_function(log_fact_table* self, int k1, int k2, int tm, int x) {
 
 	if(x>k1 || x>k2)
 		return 0;
 	
+	return self->cum_hyper_right(x, k2, tm, k1);
 	
-	if(k1*k1<tm)
-		return self->cum_hyper_right(x, k2, tm, k1);
-	
-	
-	// k1 is the degree of the node
-	// k2 is the degree of the other node (the bigger)
-	// k3 is 2m - k1 - k2
-	
-	
-	int k3=tm -k1;
-	
-	int H=(k3 - k1 -k2) /2;
-	int l1=max(0, -H);
-	
-	if(x==l1)
-		return 1;
-	
-	
-	int mode= max(cast_int( k2 / double(k1+k3) * k1), l1);		// this mode in underestimated anyway
-	if(mode>k2)
-		mode=k2;
-	
-	//spdout<<"mode: "<<mode<<"\n";
-	if(x<mode)
-		return self->cum_hyper_right(x, k2, tm, k1);
-	
-	
-	return self->fast_right_cum_symmetric_eq(k1, k2, H, x, mode, tm);
-
 }
+
 
 
 
@@ -81,7 +53,7 @@ double prog_right_cumulative_function(log_fact_table* self,int k1, int k2, int t
 
 namespace oslom{
 Parameters *paras=0;
-namespace undir{
+namespace dir{
 log_fact_table* LOG_TABLE =0;
 }
 }
@@ -90,41 +62,34 @@ log_fact_table* LOG_TABLE =0;
 
 
 #include "module_collection.h"
-#include "undir_weighted_tabdeg.h"
+#include "dir_weighted_tabdeg.h"
 
+#include "directed_network.h"
+#include "louvain_oslomnet_dir.h"
+#include "directed_oslomnet_evaluate.h"
+#include "dir_oslom_net_global.h"
 
-
-#include "undirected_network.h"
-#include "louvain_oslomnet_undir.h"
-#include "undirected_oslomnet_evaluate.h"
-#include "undir_oslom_net_global.h"
 #include "hierarchies.h"
 
 
 
-
-using namespace oslom::undir;
-
-
+using namespace oslom::dir;
 void program_statement(char * b) {
 	
 	spdout<<"\n\n\n***************************************************************************************************************************************************"<<"\n";
 
-	spdout<<"This program implements the OSLO-method for undirected networks"<<"\n";
+	spdout<<"This program implements the OSLO-method for directed networks"<<"\n";
 	
 		
 	general_program_statement(b);
+	
 	
 }
 
 
 
+#include "main_body.hpp"
 
-
-
-
-
-#include "main_body.cpp"
 
 
 

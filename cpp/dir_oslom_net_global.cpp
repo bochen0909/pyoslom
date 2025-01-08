@@ -638,9 +638,9 @@ void oslom_net_global::print_statistics(ostream & outt, module_collection & Mcol
 
 
 
-#include "oslom_net_unions.cpp"
-#include "oslom_net_check_overlap.cpp"
-#include "try_homeless_dir.cpp"
+#include "oslom_net_unions.hpp"
+#include "oslom_net_check_overlap.hpp"
+#include "try_homeless_dir.hpp"
 
 
 }}

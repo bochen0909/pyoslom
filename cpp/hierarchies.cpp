@@ -56,8 +56,6 @@ bool manipulate_string(string s, string netfile, string & outs) {
 /* this function is to call a different program */
 void external_program_to_call(string network_file, oslom_net_global_handler & matteo, string plz_out, int & soft_partitions_written) {
 
-	int sy;
-	
 	char b[1000];
 	cast_string_to_char(plz_out, b);
 	ofstream out1(b, ios::app);
@@ -82,7 +80,7 @@ void external_program_to_call(string network_file, oslom_net_global_handler & ma
 			cast_string_to_char(output_string, exec_this);
 			
 			spdout<<"running "<<exec_this<<"\n";
-			sy=system(exec_this);
+			system(exec_this);
 			
 			module_collection Mcoll(matteo.size());
 			matteo.hint(Mcoll, to_run_p);
@@ -226,8 +224,6 @@ bool write_tp_of_this_level(int level, oslom_net_global_handler & luca, char * d
 		it returns false when the process can be stopped 
 		luca will be set equal to the next network to run	*/
 	
-	int csy;
-	
 	char char_to_use[1000];
 	sprintf(char_to_use, "%s_oslo_files/partitions_level_%d", directory_char, level);
 	string tps(char_to_use);
@@ -268,7 +264,7 @@ bool write_tp_of_this_level(int level, oslom_net_global_handler & luca, char * d
 			
 		char char_to_copy[1000];
 		sprintf(char_to_copy, "cp %s_oslo_files/net%d oslo_network_h", directory_char, level);
-		csy=system(char_to_copy);
+		system(char_to_copy);
 		external_program_to_call("oslo_network_h", luca, tps, soft_partitions_written);
 	}
 	

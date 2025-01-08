@@ -7,7 +7,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "main_directed.cpp"
+#include "main_directed.hpp"
 
 namespace py = pybind11;
 
