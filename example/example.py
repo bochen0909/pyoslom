@@ -1,7 +1,7 @@
 import networkx as nx
 from pyoslom import OSLOM
 G = nx.read_pajek("example.pajek")
-alg = OSLOM(random_state=123)
+alg = OSLOM(random_state=123, verbose=True)
 results = alg.fit_transform(G)
 
 

@@ -63,34 +63,35 @@ void external_program_to_call(string network_file, oslom_net_global_handler & ma
 
 
 	for(UI ei=0; ei<paras->to_run.size(); ei++) {
+		throw std::runtime_error("external_program_to_call should not be in loop");
 		
-		string output_string;
+		// string output_string;
 		
 		
-		if(manipulate_string(paras->to_run[ei], network_file, output_string)==false) {
+		// if(manipulate_string(paras->to_run[ei], network_file, output_string)==false) {
 			
-			spdout<<"In string: "<<paras->to_run[ei]<<", keyword NETx was missing. The string cannot be run"<<"\n";
+		// 	spdout<<"In string: "<<paras->to_run[ei]<<", keyword NETx was missing. The string cannot be run"<<"\n";
 		
-		} else {
+		// } else {
 			
-			string to_run_p;
-			manipulate_string(paras->to_run_part[ei], network_file, to_run_p);
+		// 	string to_run_p;
+		// 	manipulate_string(paras->to_run_part[ei], network_file, to_run_p);
 		
-			char exec_this[2000];
-			cast_string_to_char(output_string, exec_this);
+		// 	char exec_this[2000];
+		// 	cast_string_to_char(output_string, exec_this);
 			
-			spdout<<"running "<<exec_this<<"\n";
-			system(exec_this);
+		// 	spdout<<"running "<<exec_this<<"\n";
+		// 	system(exec_this);
 			
-			module_collection Mcoll(matteo.size());
-			matteo.hint(Mcoll, to_run_p);
+		// 	module_collection Mcoll(matteo.size());
+		// 	matteo.hint(Mcoll, to_run_p);
 			
-			if(Mcoll.size()>0) {
-				matteo.print_modules(true, out1, Mcoll);				// not homeless nodes	
-				soft_partitions_written++;
-			}
+		// 	if(Mcoll.size()>0) {
+		// 		matteo.print_modules(true, out1, Mcoll);				// not homeless nodes	
+		// 		soft_partitions_written++;
+		// 	}
 			
-		}
+		// }
 	
 	}
 
@@ -224,6 +225,7 @@ bool write_tp_of_this_level(int level, oslom_net_global_handler & luca, char * d
 		it returns false when the process can be stopped 
 		luca will be set equal to the next network to run	*/
 	
+	
 	char char_to_use[1000];
 	sprintf(char_to_use, "%s_oslo_files/partitions_level_%d", directory_char, level);
 	string tps(char_to_use);
@@ -258,14 +260,14 @@ bool write_tp_of_this_level(int level, oslom_net_global_handler & luca, char * d
 	if(level==0) {
 		external_program_to_call(paras->file1, luca, tps, soft_partitions_written);
 	} else if(paras->to_run.size()>0) {
+		throw std::runtime_error("write_tp_of_this_level should not be in else");
 		
-		
-		spdout<<"copying network file to the main folder"<<"\n";
+		// spdout<<"copying network file to the main folder"<<"\n";
 			
-		char char_to_copy[1000];
-		sprintf(char_to_copy, "cp %s_oslo_files/net%d oslo_network_h", directory_char, level);
-		system(char_to_copy);
-		external_program_to_call("oslo_network_h", luca, tps, soft_partitions_written);
+		// char char_to_copy[1000];
+		// sprintf(char_to_copy, "cp %s_oslo_files/net%d oslo_network_h", directory_char, level);
+		// csy=system(char_to_copy);
+		// external_program_to_call("oslo_network_h", luca, tps, soft_partitions_written);
 	}
 	
 	

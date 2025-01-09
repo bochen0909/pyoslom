@@ -92,7 +92,9 @@ int main_function(const std::vector<std::string> &args)
 	char directory_char[1000];
 	cast_string_to_char(paras->file1, directory_char);
 	char char_to_use[1000];
-	sprintf(char_to_use, "%s_oslo_files", directory_char);
+	snprintf(char_to_use, sizeof(char_to_use), "%s_oslo_files", directory_char);
+
+
 
 	if (fs::exists(char_to_use))
 	{
