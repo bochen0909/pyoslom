@@ -10,3 +10,4 @@ pyfeaca.egg-info/
 *.so
 *.pyd
 *.o
+.DS_Store
