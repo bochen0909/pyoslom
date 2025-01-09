@@ -101,11 +101,15 @@ public:
 
     virtual ~LogStream()
     {
-        if (!buff.empty())
-        {
-            this->log(buff);
-        }
-        buff = "";
+        #ifdef __APPLE__
+            
+        #else
+            if (!buff.empty())
+            {
+                this->log(buff);
+            }
+            buff = "";
+        #endif
     }
 
 protected:
