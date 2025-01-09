@@ -23,6 +23,9 @@ test = 'scripts:test'
 script = "build.py"
 generate-setup-file = true
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+
 [build-system]
 requires = [
     "poetry-core>=1.0.0",
