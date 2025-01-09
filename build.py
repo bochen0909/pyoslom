@@ -17,18 +17,7 @@ with open("README.md", "r") as fh:
 
 def get_cpp_files():
     cppfiles = glob.glob("cpp/*.cpp") + glob.glob("cpp/*/*.cpp")
-    for fname in [
-        "main_directed.cpp",
-        "main_undirected.cpp",
-        "oslom_net_check_overlap.cpp",
-        "main_body.cpp",
-        "standard_include.cpp",
-        "try_homeless_dir.cpp",
-        "oslom_net_unions.cpp",
-        "try_homeless_undir.cpp",
-    ]:
-        cppfiles = [u for u in cppfiles if fname not in u]
-
+    
     undircppfiles = [
         u
         for u in cppfiles
@@ -54,8 +43,9 @@ def get_cpp_files():
 
 def build(setup_kwargs):
     undircppfiles, dircppfiles = get_cpp_files()
+    
     extra_compile_args = (
-        ["/std:c++17"]
+        ["/std:c++17", f"/MP{multiprocessing.cpu_count()}"]  # /MP flag for MSVC parallel builds
         if is_windows
         else (
             ["-O3", "-std=c++17", "-mmacosx-version-min=10.15"]
@@ -84,6 +74,8 @@ def build(setup_kwargs):
             language="c++",
         ),
     ]
+    
+    # Enable parallel build
     setup_kwargs.update(
         {
             "description": "OSLOM graph clustering algorithm",
@@ -93,5 +85,6 @@ def build(setup_kwargs):
             "cmdclass": {"build_ext": build_ext},
             "zip_safe": False,
             "include_package_data": True,
+            "options": {"build": {"parallel": 4}},  # Enable parallel build
         }
     )
