@@ -2,35 +2,21 @@
 #define MYOUT_INCLUDED
 #include <string>
 #include <sstream>
-#include "../spdlog/spdlog.h"
+#include <iostream>
+#include <chrono>
+#include <iomanip>
 
-template <spdlog::level::level_enum LEVEL>
-class SpdlogStream : public std::ostream
+
+class LogStream : public std::ostream
 {
-    template <typename A>
-    friend SpdlogStream &operator<<(SpdlogStream &out, A &lhs);
 
 public:
-#ifdef _WIN32
-    SpdlogStream():std::ostream(std::cout.rdbuf()){}
-#endif
+    static bool verbose;
 
-    void log(const std::string &msg)
-    {
-        spdlog::log(LEVEL, msg);
-    }
-
-    virtual ~SpdlogStream()
-    {
-        if (!buff.empty())
-        {
-            this->log(buff);
-        }
-        buff = "";
-    }
+    LogStream(){}
 
     template <typename A>
-    SpdlogStream &operator<<(A &lhs)
+    LogStream &operator<<(A &lhs)
     {
         auto &out = *this;
         std::stringstream ss;
@@ -49,57 +35,85 @@ public:
         return out;
     }
 
-    SpdlogStream &operator<<(const char *lhs)
+    LogStream &operator<<(const char *lhs)
     {
         return this->operator<<<const char *>(lhs);
     }
 
-    SpdlogStream &operator<<(char *lhs)
+    LogStream &operator<<(char *lhs)
     {
         return this->operator<<<char *>(lhs);
     }
 
-    SpdlogStream &operator<<(int lhs)
-    {
-        return this->operator<<<int>(lhs);
-    }
+   
 
-    SpdlogStream &operator<<(unsigned int lhs)
+    LogStream &operator<<(unsigned int lhs)
     {
         return this->operator<<<unsigned int>(lhs);
     }
 
-    SpdlogStream &operator<<(long int lhs)
+    LogStream &operator<<(long int lhs)
     {
         return this->operator<<<long int>(lhs);
     }
-    SpdlogStream &operator<<(size_t lhs)
+    LogStream &operator<<(int lhs)
+    {
+        return this->operator<<<int>(lhs);
+    }
+    LogStream &operator<<(size_t lhs)
     {
         return this->operator<<<size_t>(lhs);
     }
-    SpdlogStream &operator<<(double lhs)
+    LogStream &operator<<(double lhs)
     {
         return this->operator<<<double>(lhs);
     }
 
-    SpdlogStream &operator<<(std::string &lhs)
+    LogStream &operator<<(std::string &lhs)
     {
         return this->operator<<<std::string>(lhs);
     }
 
-    SpdlogStream &operator<<(char lhs)
+    LogStream &operator<<(char lhs)
     {
         return this->operator<<<char>(lhs);
     }
 
-    SpdlogStream &operator<<(unsigned char lhs)
+    LogStream &operator<<(unsigned char lhs)
     {
         return this->operator<<<unsigned char>(lhs);
     }
 
-    SpdlogStream &operator<<(signed char lhs)
+    LogStream &operator<<(signed char lhs)
     {
         return this->operator<<<signed char>(lhs);
+    }
+
+
+    void log(const std::string &msg)
+    {
+        if (LogStream::verbose) {
+            auto now = std::chrono::system_clock::now();
+            auto time = std::chrono::system_clock::to_time_t(now);
+            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                now.time_since_epoch()) % 1000;
+            
+            std::stringstream ss;
+            ss << "[" << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S")
+               << "." << std::setfill('0') << std::setw(3) << ms.count() 
+               << "] [info] " << msg;
+            
+            std::cout << ss.str() << std::endl;
+        }
+    }
+
+    virtual ~LogStream()
+    {
+        if (!buff.empty())
+        {
+            this->log(buff);
+        }
+        buff = "";
     }
 
 protected:
@@ -107,7 +121,6 @@ protected:
 };
 
 extern "C" void set_spdlog_verbose(bool b);
-extern SpdlogStream<spdlog::level::info> spdout;
-extern SpdlogStream<spdlog::level::err> spderr;
+extern LogStream spdout;
 
 #endif
