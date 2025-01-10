@@ -13,7 +13,8 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
           matrix:
-            os: [ubuntu-latest, windows-lates.t, macos-latest]
+            # macos-13 is an intel runner, macos-14 is apple silicon
+            os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
             # os: [windows-latest]
 
         steps:
