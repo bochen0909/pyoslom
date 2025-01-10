@@ -56,10 +56,10 @@ jobs:
 
             - name: Build
               run: |
-                ls -alrt cpp
+                ls -alrt build
                 poetry build && poetry install --no-interaction || true
                 echo "Build done"
-                ls -alrt cpp
+                ls -alrt build
 
             - name: Test
               run: poetry run pytest
