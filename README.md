@@ -1,83 +1,88 @@
+# PyOSLOM: Python Binding for OSLOM Graph Clustering
 
-# Python binding for OSLOM graph clustering algorithm   
+## Overview
+PyOSLOM provides Python bindings for [OSLOM](http://www.oslom.org/) (Order Statistics Local Optimization Method), a powerful graph clustering algorithm. It supports:
+- Both directed and undirected graphs
+- Weighted and unweighted networks
+- Multiple hierarchical levels of clustering
 
+> ⚠️ Note: OSLOM is computationally intensive and best suited for medium-sized graphs.
 
-## Summary
-
-Pyolsom is a python binding for [OSLOM](http://www.oslom.org/) (Order Statistics Local Optimization Method) graph clustering algorithm.
-
-It works with directed/undirected weighted and unweighted graph. 
-The algorithm performs usually good but slow, so it is better to be applied to medium graph size. 
-
-The orginal C++ code is really hard to be refactored. I tried the best to make it work with python.
-
-### Known issues
-
-* The lib is not thread safe. So use mutliprocess  when parallel is required. 
-* Only works on Linux
-
+## Features
+- Seamless integration with NetworkX graphs
+- Support for multiple operating systems (Linux, macOS, Windows*)
+- Hierarchical community detection
+- Deterministic results with seed control
 
 ## Requirements
-* C++ 17 
-* Python >= 3.10
-* scikit-learn>=0.24
-* pybind11>=2.6
-* networkx>=2.5
+- Python ≥ 3.10
+- C++ 17 compiler
+- Dependencies:
+  - scikit-learn ≥ 0.24
+  - pybind11 ≥ 2.6
+  - networkx ≥ 2.5
 
-The versions are what I worked on. Lower versions may work also.  
+## Installation
 
-## Install
-
-### Use setup.py
+### Via pip (Recommended)
 ```bash
-git clone https://bochen0909@github.com/bochen0909/pyoslom.git
-cd pyoslom 
-pip install -r requirements.txt
-python setup.py install
+pip install pyoslom
 ```
 
-### Use Poetry
+### From source using Poetry
 ```bash
-git clone https://bochen0909@github.com/bochen0909/pyoslom.git
+git clone https://github.com/bochen0909/pyoslom.git
 cd pyoslom 
 poetry install --no-root
 poetry build
 poetry install
 ```
 
-### or use pip
+### From source using setup.py
 ```bash
-pip install pyoslom
+git clone https://github.com/bochen0909/pyoslom.git
+cd pyoslom 
+pip install -r requirements.txt
+python setup.py install
 ```
 
-## How to use
-
-Example:
-
+## Quick Start
 ```python
 import networkx as nx
 from pyoslom import OSLOM
 
-G = nx.read_pajek("example.pajek") # networkx graph or adjacency matrix
+# Load or create your graph
+G = nx.read_pajek("example.pajek")
+
+# Initialize and run OSLOM
 alg = OSLOM(random_state=123)
 results = alg.fit_transform(G)
 
-def print_clus(clus):
+# Print clustering results
+def print_clusters(clus):
     for k, v in clus.items():
         if k != 'clusters':
-            print(str(k) + "=" + str(v))
-    for k, l in clus['clusters'].items():
-        print("Level:" + str(k) + ", #clu=" + str(len(l)))
+            print(f"{k}={v}")
+    for level, clusters in clus['clusters'].items():
+        print(f"Level: {level}, Number of clusters: {len(clusters)}")
 
-print_clus(results)
-
+print_clusters(results)
 ```
 
-For more complete examples please see the notebook [example.ipynb](example/example.ipynb).
+For detailed examples and visualizations, see [example.ipynb](example/example.ipynb).
 
-![example_clu0.png](example/example_clu0.png)
-![example_clu1.png](example/example_clu1.png)
+## Visualization Examples
+![Clustering Level 0](example/example_clu0.png)
+![Clustering Level 1](example/example_clu1.png)
+
+## Known Limitations
+- Not thread-safe (use multiprocessing for parallel execution)
+- Windows users need to build from source
+- The underlying C++ codebase is complex and challenging to maintain
 
 ## License
-The original c++ code is published at [OSLOM](http://www.oslom.org/) following a research publication. However there is no license attached with it. 
-The python wrapping work is licensed under the GPLv2.
+- Original OSLOM C++ code: No explicit license (see [OSLOM website](http://www.oslom.org/))
+- Python bindings: GPLv2
+
+## Contributing
+Contributions are welcome! Please feel free to submit issues and pull requests.
