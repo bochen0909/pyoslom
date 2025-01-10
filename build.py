@@ -50,7 +50,7 @@ def build(setup_kwargs):
         else (
             ["-O3", "-std=c++17", "-mmacosx-version-min=10.15"]
             if is_macos
-            else ["-O0", "-std=c++17"]
+            else ["-O3", "-std=c++17"]
         )
     )
 
