@@ -14,8 +14,8 @@ jobs:
         strategy:
           matrix:
             # macos-13 is an intel runner, macos-14 is apple silicon
-            os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-            # os: [windows-latest]
+            # os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+            os: [windows-latest]
 
         steps:
             - name: Checkout
@@ -37,5 +37,5 @@ jobs:
 
             - name: Test
               run: |
-                python setup.py test || true
+                python setup.py test
                 echo "Test passed"

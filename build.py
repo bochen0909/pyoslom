@@ -45,7 +45,7 @@ def build(setup_kwargs):
     undircppfiles, dircppfiles = get_cpp_files()
     
     extra_compile_args = (
-        ["/std:c++17", f"/MP4"]  # /MP flag for MSVC parallel builds
+        ["/std:c++17"]
         if is_windows
         else (
             ["-O3", "-std=c++17", "-mmacosx-version-min=10.15"]
