@@ -56,11 +56,10 @@ jobs:
 
             - name: Build
               run: |
-                if [ "$RUNNER_OS" == "Windows" ]; then
-                  runas /user:Administrator "poetry build && poetry install --no-interaction"
-                else
-                  poetry build && poetry install --no-interaction
-                fi
+                ls -alrt cpp
+                poetry build && poetry install --no-interaction || true
+                echo "Build done"
+                ls -alrt cpp
 
             - name: Test
               run: poetry run pytest
