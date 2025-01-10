@@ -49,7 +49,7 @@ jobs:
               run: poetry install --no-root
 
             - name: Build
-              run: poetry build
+              run: poetry build && poetry install
 
             - name: Test
               run: poetry run pytest
