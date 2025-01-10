@@ -57,7 +57,13 @@ jobs:
             - name: Build
               run: |
                 ls -alrt .
-                poetry build && poetry install --no-interaction || true
+                if [ "$RUNNER_OS" == "Windows" ]; then
+                  # repeat the command until it succeeds
+                  while ! poetry build; do sleep 1; done
+                  poetry install --no-interaction
+                else
+                  poetry build && poetry install --no-interaction
+                fi
                 echo "Build done"
                 ls -alR build
 
