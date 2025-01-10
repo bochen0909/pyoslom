@@ -56,7 +56,7 @@ jobs:
 
             - name: Build
               run: |
-                ls -alrt build
+                ls -alrt .
                 poetry build && poetry install --no-interaction || true
                 echo "Build done"
                 ls -alrt build
