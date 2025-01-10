@@ -14,8 +14,8 @@ jobs:
         strategy:
           matrix:
             # macos-13 is an intel runner, macos-14 is apple silicon
-            # os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-            os: [windows-latest]
+            os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+            # os: [windows-latest]
 
         defaults:
           run:
@@ -56,7 +56,6 @@ jobs:
 
             - name: Build
               run: |
-                ls -alrt .
                 if [ "$RUNNER_OS" == "Windows" ]; then
                   # repeat the command until it succeeds
                   while ! poetry build; do sleep 1; done
@@ -65,7 +64,6 @@ jobs:
                   poetry build && poetry install --no-interaction
                 fi
                 echo "Build done"
-                ls -alR build
 
             - name: Test
               run: poetry run pytest
