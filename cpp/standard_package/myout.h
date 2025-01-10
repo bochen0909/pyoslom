@@ -12,7 +12,7 @@ class LogStream : public std::ostream
 public:
     static bool verbose;
 
-    LogStream(){}
+    LogStream() : std::ostream(nullptr) {}  // Initialize base class with nullptr buffer
 
     template <typename A>
     LogStream &operator<<(A &lhs)
