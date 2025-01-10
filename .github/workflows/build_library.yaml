@@ -59,7 +59,7 @@ jobs:
                 ls -alrt .
                 poetry build && poetry install --no-interaction || true
                 echo "Build done"
-                ls -alrt build
+                ls -alR build
 
             - name: Test
               run: poetry run pytest
