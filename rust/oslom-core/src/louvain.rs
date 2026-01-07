@@ -3,6 +3,8 @@ use crate::graph::{Network, NodeId};
 use crate::modules::{ModuleCollection, ModuleId};
 use rand::prelude::*;
 use std::collections::HashMap;
+use rayon::prelude::*;
+use std::sync::{Arc, Mutex};
 
 pub struct LouvainOptimizer<'a> {
     network: &'a Network,
@@ -49,13 +51,20 @@ impl<'a> LouvainOptimizer<'a> {
     }
 
     fn optimize_pass(&mut self) -> Result<bool> {
-        let mut improved = false;
         let mut nodes: Vec<_> = self.network.nodes().collect();
         
         // Randomize order for better results
         nodes.shuffle(&mut thread_rng());
 
-        for node in nodes {
+        // For now, always use sequential processing to respect single-threaded default
+        // TODO: Add config parameter to control parallel processing
+        self.optimize_pass_sequential(&nodes)
+    }
+
+    fn optimize_pass_sequential(&mut self, nodes: &[NodeId]) -> Result<bool> {
+        let mut improved = false;
+
+        for &node in nodes {
             let current_community = self.node_to_community[&node];
             let best_community = self.find_best_community(node)?;
 
@@ -66,6 +75,173 @@ impl<'a> LouvainOptimizer<'a> {
         }
 
         Ok(improved)
+    }
+
+    fn optimize_pass_parallel(&mut self, nodes: &[NodeId]) -> Result<bool> {
+        let chunk_size = (nodes.len() / rayon::current_num_threads()).max(100);
+        let node_chunks: Vec<_> = nodes.chunks(chunk_size).collect();
+        
+        // Shared state for parallel processing
+        let node_to_community = Arc::new(Mutex::new(self.node_to_community.clone()));
+        let community_weights = Arc::new(Mutex::new(self.community_weights.clone()));
+        
+        // Process chunks in parallel
+        let moves: Vec<_> = node_chunks
+            .par_iter()
+            .map(|chunk| {
+                let mut local_moves = Vec::new();
+                
+                for &node in chunk.iter() {
+                    let current_community = {
+                        let communities = node_to_community.lock().unwrap();
+                        communities[&node]
+                    };
+                    
+                    let best_community = self.find_best_community_parallel(
+                        node, 
+                        &node_to_community, 
+                        &community_weights
+                    )?;
+
+                    if best_community != current_community {
+                        local_moves.push((node, current_community, best_community));
+                    }
+                }
+                
+                Ok::<Vec<_>, OslomError>(local_moves)
+            })
+            .collect::<Result<Vec<_>>>()?;
+
+        // Apply moves sequentially to avoid conflicts
+        let mut improved = false;
+        for chunk_moves in moves {
+            for (node, _old_community, new_community) in chunk_moves {
+                self.move_node_to_community(node, new_community)?;
+                improved = true;
+            }
+        }
+
+        Ok(improved)
+    }
+
+    fn find_best_community_parallel(
+        &self,
+        node: NodeId,
+        node_to_community: &Arc<Mutex<HashMap<NodeId, ModuleId>>>,
+        community_weights: &Arc<Mutex<HashMap<ModuleId, f64>>>,
+    ) -> Result<ModuleId> {
+        let current_community = {
+            let communities = node_to_community.lock().unwrap();
+            communities[&node]
+        };
+        
+        let mut best_community = current_community;
+        let mut best_gain = 0.0;
+
+        // Consider neighboring communities
+        let mut candidate_communities = std::collections::HashSet::new();
+        candidate_communities.insert(current_community);
+
+        if let Some(neighbors) = self.network.neighbors(node) {
+            for &(neighbor, _) in neighbors {
+                let neighbor_community = {
+                    let communities = node_to_community.lock().unwrap();
+                    communities.get(&neighbor).copied()
+                };
+                
+                if let Some(community) = neighbor_community {
+                    candidate_communities.insert(community);
+                }
+            }
+        }
+
+        for &community in &candidate_communities {
+            let gain = self.calculate_modularity_gain_parallel(
+                node, 
+                community, 
+                node_to_community, 
+                community_weights
+            )?;
+            
+            if gain > best_gain {
+                best_gain = gain;
+                best_community = community;
+            }
+        }
+
+        Ok(best_community)
+    }
+
+    fn calculate_modularity_gain_parallel(
+        &self,
+        node: NodeId,
+        target_community: ModuleId,
+        node_to_community: &Arc<Mutex<HashMap<NodeId, ModuleId>>>,
+        community_weights: &Arc<Mutex<HashMap<ModuleId, f64>>>,
+    ) -> Result<f64> {
+        let current_community = {
+            let communities = node_to_community.lock().unwrap();
+            communities[&node]
+        };
+        
+        if current_community == target_community {
+            return Ok(0.0);
+        }
+
+        let node_degree = self.network.weighted_degree(node);
+        
+        let (current_community_weight, target_community_weight) = {
+            let weights = community_weights.lock().unwrap();
+            let current_weight = weights[&current_community];
+            let target_weight = weights.get(&target_community).copied().unwrap_or(0.0);
+            (current_weight, target_weight)
+        };
+
+        // Calculate edges to current and target communities
+        let edges_to_current = self.calculate_edges_to_community_parallel(
+            node, 
+            current_community, 
+            node_to_community
+        )?;
+        let edges_to_target = self.calculate_edges_to_community_parallel(
+            node, 
+            target_community, 
+            node_to_community
+        )?;
+
+        if self.total_weight == 0.0 {
+            return Ok(0.0);
+        }
+
+        // Modularity gain calculation
+        let gain = (edges_to_target - edges_to_current) / self.total_weight
+            - (node_degree * (target_community_weight - current_community_weight + node_degree)) 
+              / (2.0 * self.total_weight * self.total_weight);
+
+        Ok(gain)
+    }
+
+    fn calculate_edges_to_community_parallel(
+        &self,
+        node: NodeId,
+        community: ModuleId,
+        node_to_community: &Arc<Mutex<HashMap<NodeId, ModuleId>>>,
+    ) -> Result<f64> {
+        let mut weight = 0.0;
+
+        if let Some(neighbors) = self.network.neighbors(node) {
+            let communities = node_to_community.lock().unwrap();
+            
+            for &(neighbor, edge_weight) in neighbors {
+                if let Some(&neighbor_community) = communities.get(&neighbor) {
+                    if neighbor_community == community && neighbor != node {
+                        weight += edge_weight;
+                    }
+                }
+            }
+        }
+
+        Ok(weight)
     }
 
     fn find_best_community(&self, node: NodeId) -> Result<ModuleId> {

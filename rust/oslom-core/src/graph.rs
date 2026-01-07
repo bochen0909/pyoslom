@@ -1,5 +1,4 @@
 use std::collections::{HashMap, HashSet};
-use crate::error::{OslomError, Result};
 
 pub type NodeId = usize;
 
@@ -75,7 +74,10 @@ impl Network {
             if let Some(neighbors) = self.adjacency.get(&node) {
                 for &(neighbor, weight) in neighbors {
                     if node_set.contains(&neighbor) {
-                        subgraph.add_edge_internal(node, neighbor, weight);
+                        // For undirected graphs, only add edge once (when node <= neighbor)
+                        if self.directed || node <= neighbor {
+                            subgraph.add_edge_internal(node, neighbor, weight);
+                        }
                     }
                 }
             }

@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use crate::graph::NodeId;
 use crate::error::{OslomError, Result};
+use rayon::prelude::*;
 
 pub type ModuleId = usize;
 
@@ -115,8 +116,15 @@ impl ModuleCollection {
     }
 
     pub fn find_overlapping_pairs(&self, threshold: f64) -> Vec<(ModuleId, ModuleId, f64)> {
-        let mut overlaps = Vec::new();
         let module_ids: Vec<_> = self.module_ids().collect();
+        
+        // Use sequential processing by default
+        // TODO: Add config parameter to enable parallel processing
+        self.find_overlapping_pairs_sequential(&module_ids, threshold)
+    }
+
+    fn find_overlapping_pairs_sequential(&self, module_ids: &[ModuleId], threshold: f64) -> Vec<(ModuleId, ModuleId, f64)> {
+        let mut overlaps = Vec::new();
         
         for i in 0..module_ids.len() {
             for j in (i + 1)..module_ids.len() {
@@ -132,6 +140,25 @@ impl ModuleCollection {
         }
         
         overlaps
+    }
+
+    fn find_overlapping_pairs_parallel(&self, module_ids: &[ModuleId], threshold: f64) -> Vec<(ModuleId, ModuleId, f64)> {
+        // Generate all pairs for parallel processing
+        let pairs: Vec<_> = (0..module_ids.len())
+            .flat_map(|i| {
+                ((i + 1)..module_ids.len()).map(move |j| (module_ids[i], module_ids[j]))
+            })
+            .collect();
+
+        // Process pairs in parallel
+        pairs
+            .par_iter()
+            .filter_map(|&(id1, id2)| {
+                self.check_overlap(id1, id2)
+                    .filter(|&overlap| overlap >= threshold)
+                    .map(|overlap| (id1, id2, overlap))
+            })
+            .collect()
     }
 
     pub fn merge_modules(&mut self, module_ids: &[ModuleId]) -> Result<ModuleId> {

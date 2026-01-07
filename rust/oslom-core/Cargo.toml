@@ -17,6 +17,26 @@ serde = { workspace = true }
 [dev-dependencies]
 criterion = "0.5"
 
+[[example]]
+name = "parallel_benchmark"
+path = "examples/parallel_benchmark.rs"
+
+[[example]]
+name = "large_network_benchmark"
+path = "examples/large_network_benchmark.rs"
+
+[[example]]
+name = "performance_comparison"
+path = "examples/performance_comparison.rs"
+
+[[example]]
+name = "scaling_benchmark"
+path = "examples/scaling_benchmark.rs"
+
+[[example]]
+name = "threading_demo"
+path = "examples/threading_demo.rs"
+
 [[bench]]
 name = "oslom_benchmark"
 harness = false

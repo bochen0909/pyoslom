@@ -1,7 +1,6 @@
-use crate::error::{OslomError, Result};
+use crate::error::Result;
 use crate::graph::{Network, NodeId};
-use crate::modules::{ModuleCollection, Module};
-use std::collections::HashMap;
+use crate::modules::ModuleCollection;
 
 pub struct StatisticalTester<'a> {
     network: &'a Network,
@@ -20,7 +19,9 @@ impl<'a> StatisticalTester<'a> {
 
     pub fn evaluate_modules(&mut self, modules: &ModuleCollection) -> Result<ModuleCollection> {
         let mut evaluated = ModuleCollection::new();
-
+        
+        // For now, always use sequential evaluation to respect single-threaded default
+        // TODO: Add config parameter to control parallel evaluation
         for module in modules.modules() {
             let score = self.evaluate_module(&module.nodes)?;
             if score >= self.threshold {
@@ -29,6 +30,45 @@ impl<'a> StatisticalTester<'a> {
         }
 
         Ok(evaluated)
+    }
+
+    // Thread-safe version of evaluate_module for parallel processing
+    fn evaluate_module_thread_safe(&self, nodes: &[NodeId]) -> Result<f64> {
+        if nodes.is_empty() {
+            return Ok(0.0);
+        }
+
+        // Calculate internal and external edges
+        let (internal_edges, external_edges, total_degree) = self.calculate_edge_statistics(nodes)?;
+        
+        // Perform CUP (Clustering with Uncorrelated Pairs) test
+        self.cup_test_thread_safe(internal_edges, external_edges, total_degree, nodes.len())
+    }
+
+    fn cup_test_thread_safe(&self, internal: usize, _external: usize, total_degree: usize, module_size: usize) -> Result<f64> {
+        if total_degree == 0 {
+            return Ok(0.0);
+        }
+
+        let total_edges = self.network.edge_count();
+        let total_nodes = self.network.node_count();
+        
+        if total_edges == 0 || total_nodes <= 1 {
+            return Ok(0.0);
+        }
+
+        // Expected number of internal edges under null hypothesis
+        let expected_internal = self.expected_internal_edges(module_size, total_degree, total_edges, total_nodes)?;
+        
+        // Calculate p-value using hypergeometric distribution
+        let p_value = self.hypergeometric_tail_probability_thread_safe(internal, total_degree, expected_internal)?;
+        
+        // Convert p-value to significance score (negative log p-value)
+        if p_value > 0.0 {
+            Ok(-p_value.ln())
+        } else {
+            Ok(f64::INFINITY)
+        }
     }
 
     pub fn evaluate_module(&mut self, nodes: &[NodeId]) -> Result<f64> {
@@ -68,7 +108,7 @@ impl<'a> StatisticalTester<'a> {
         Ok((internal_edges, external_edges, total_degree))
     }
 
-    fn cup_test(&mut self, internal: usize, external: usize, total_degree: usize, module_size: usize) -> Result<f64> {
+    fn cup_test(&mut self, internal: usize, _external: usize, total_degree: usize, module_size: usize) -> Result<f64> {
         if total_degree == 0 {
             return Ok(0.0);
         }
@@ -94,7 +134,7 @@ impl<'a> StatisticalTester<'a> {
         }
     }
 
-    fn expected_internal_edges(&self, module_size: usize, total_degree: usize, total_edges: usize, total_nodes: usize) -> Result<f64> {
+    fn expected_internal_edges(&self, module_size: usize, total_degree: usize, _total_edges: usize, total_nodes: usize) -> Result<f64> {
         if total_nodes <= 1 {
             return Ok(0.0);
         }
@@ -161,6 +201,53 @@ impl<'a> StatisticalTester<'a> {
 
         // Complementary error function approximation
         Ok(0.5 * (1.0 - erf(z_score / std::f64::consts::SQRT_2)))
+    }
+
+    // Thread-safe versions for parallel processing
+    fn hypergeometric_tail_probability_thread_safe(&self, observed: usize, total_degree: usize, expected: f64) -> Result<f64> {
+        if expected <= 0.0 || total_degree == 0 {
+            return Ok(1.0);
+        }
+
+        // Approximate using normal distribution for large numbers
+        if total_degree > 100 {
+            return self.normal_approximation(observed, expected, total_degree);
+        }
+
+        // Exact hypergeometric calculation for smaller numbers
+        let mut p_value = 0.0;
+        let max_possible = total_degree.min(observed + 50); // Limit computation
+
+        for k in observed..=max_possible {
+            let prob = self.hypergeometric_probability_thread_safe(k, total_degree, expected)?;
+            p_value += prob;
+            
+            // Early termination if probability becomes negligible
+            if prob < 1e-10 {
+                break;
+            }
+        }
+
+        Ok(p_value.min(1.0))
+    }
+
+    fn hypergeometric_probability_thread_safe(&self, k: usize, n: usize, expected: f64) -> Result<f64> {
+        // Approximate hypergeometric with binomial for simplicity
+        let p = expected / n as f64;
+        self.binomial_probability_thread_safe(k, n, p)
+    }
+
+    fn binomial_probability_thread_safe(&self, k: usize, n: usize, p: f64) -> Result<f64> {
+        if p <= 0.0 || p >= 1.0 || k > n {
+            return Ok(0.0);
+        }
+
+        // Use log space to avoid overflow
+        let log_prob = self.log_table.log_binomial_coefficient(n, k)
+            + k as f64 * p.ln()
+            + (n - k) as f64 * (1.0 - p).ln();
+
+        Ok(log_prob.exp())
     }
 }
 

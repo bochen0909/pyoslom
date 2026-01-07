@@ -5,6 +5,7 @@ use crate::louvain::LouvainOptimizer;
 use crate::statistics::StatisticalTester;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use rayon::prelude::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OslomConfig {
@@ -26,6 +27,8 @@ pub struct OslomConfig {
     pub max_iterations: usize,
     /// Convergence tolerance
     pub convergence_tolerance: f64,
+    /// Number of threads for parallel processing (Some(1) = single-threaded by default, None = use all available)
+    pub num_threads: Option<usize>,
 }
 
 impl Default for OslomConfig {
@@ -40,6 +43,7 @@ impl Default for OslomConfig {
             verbose: false,
             max_iterations: 100,
             convergence_tolerance: 1e-6,
+            num_threads: Some(1), // Single-threaded by default
         }
     }
 }
@@ -98,6 +102,19 @@ pub fn run_oslom(network: &Network, config: &OslomConfig) -> Result<OslomResult>
         return Err(OslomError::InsufficientData("Empty network".to_string()));
     }
 
+    // Configure thread pool if specified (and not single-threaded)
+    if let Some(num_threads) = config.num_threads {
+        if num_threads > 1 {
+            rayon::ThreadPoolBuilder::new()
+                .num_threads(num_threads)
+                .build_global()
+                .map_err(|e| OslomError::InvalidConfig(format!("Failed to set thread count: {}", e)))?;
+        }
+    } else {
+        // None means use all available threads
+        // No need to configure - rayon will use default thread pool
+    }
+
     let mut hierarchical_modules = HashMap::new();
     let mut current_network = network.clone();
     let mut level = 0;
@@ -110,7 +127,8 @@ pub fn run_oslom(network: &Network, config: &OslomConfig) -> Result<OslomResult>
 
     loop {
         if config.verbose {
-            println!("Processing hierarchical level {}", level);
+            println!("Processing hierarchical level {} with {} threads", 
+                     level, rayon::current_num_threads());
         }
 
         // Run OSLOM for current level
@@ -168,31 +186,42 @@ pub fn run_oslom(network: &Network, config: &OslomConfig) -> Result<OslomResult>
 
 fn run_oslom_level(network: &Network, config: &OslomConfig, level: usize) -> Result<ModuleCollection> {
     let runs = if level == 0 { config.r } else { config.hr };
+    
+    // Check if we should use parallel processing
+    let use_parallel = match config.num_threads {
+        Some(1) => false,  // Explicitly single-threaded
+        Some(0) => false,  // Invalid thread count, treat as single-threaded
+        Some(_) => runs > 1,  // Multi-threaded if multiple runs
+        None => runs > 1,  // Use all threads if multiple runs
+    };
+    
+    if runs == 1 || !use_parallel {
+        // Single run or single-threaded - no need for parallelization
+        return run_single_oslom_iteration(network, config);
+    }
+
+    // Parallel execution of multiple runs
+    let results: Result<Vec<_>> = (0..runs)
+        .into_par_iter()
+        .map(|run| {
+            if config.verbose && runs > 1 {
+                println!("  Run {}/{}", run + 1, runs);
+            }
+            run_single_oslom_iteration(network, config)
+        })
+        .collect();
+
+    let all_results = results?;
+    
+    // Find the best result based on modularity
     let mut best_modules = ModuleCollection::new();
     let mut best_modularity = f64::NEG_INFINITY;
 
-    for run in 0..runs {
-        if config.verbose && runs > 1 {
-            println!("  Run {}/{}", run + 1, runs);
-        }
-
-        // Initialize with Louvain algorithm
-        let mut optimizer = LouvainOptimizer::new(network);
-        let initial_modules = optimizer.optimize()?;
-
-        // Evaluate modules statistically
-        let mut tester = StatisticalTester::new(network, config.threshold);
-        let evaluated_modules = tester.evaluate_modules(&initial_modules)?;
-
-        // Check for overlaps and merge if necessary
-        let final_modules = process_overlaps(network, evaluated_modules, config)?;
-
-        // Calculate modularity for this run
-        let modularity = calculate_modularity(network, &final_modules);
-        
+    for modules in all_results {
+        let modularity = calculate_modularity(network, &modules);
         if modularity > best_modularity {
             best_modularity = modularity;
-            best_modules = final_modules;
+            best_modules = modules;
         }
     }
 
@@ -202,6 +231,21 @@ fn run_oslom_level(network: &Network, config: &OslomConfig, level: usize) -> Res
     }
 
     Ok(best_modules)
+}
+
+fn run_single_oslom_iteration(network: &Network, config: &OslomConfig) -> Result<ModuleCollection> {
+    // Initialize with Louvain algorithm
+    let mut optimizer = LouvainOptimizer::new(network);
+    let initial_modules = optimizer.optimize()?;
+
+    // Evaluate modules statistically
+    let mut tester = StatisticalTester::new(network, config.threshold);
+    let evaluated_modules = tester.evaluate_modules(&initial_modules)?;
+
+    // Check for overlaps and merge if necessary
+    let final_modules = process_overlaps(network, evaluated_modules, config)?;
+
+    Ok(final_modules)
 }
 
 fn process_overlaps(
@@ -368,9 +412,16 @@ fn calculate_modularity(network: &Network, modules: &ModuleCollection) -> f64 {
         return 0.0;
     }
     
+    // Use sequential calculation by default
+    // TODO: Add config parameter to enable parallel calculation
+    let module_vec: Vec<_> = modules.modules().collect();
+    calculate_modularity_sequential(network, &module_vec, total_weight)
+}
+
+fn calculate_modularity_sequential(network: &Network, modules: &[&crate::modules::Module], total_weight: f64) -> f64 {
     let mut modularity = 0.0;
     
-    for module in modules.modules() {
+    for module in modules {
         let mut internal_weight = 0.0;
         let mut total_degree = 0.0;
         
@@ -397,6 +448,37 @@ fn calculate_modularity(network: &Network, modules: &ModuleCollection) -> f64 {
     }
     
     modularity
+}
+
+fn calculate_modularity_parallel(network: &Network, modules: &[&crate::modules::Module], total_weight: f64) -> f64 {
+    modules
+        .par_iter()
+        .map(|module| {
+            let mut internal_weight = 0.0;
+            let mut total_degree = 0.0;
+            
+            // Calculate internal edges and total degree
+            for &node in &module.nodes {
+                total_degree += network.weighted_degree(node);
+                
+                if let Some(neighbors) = network.neighbors(node) {
+                    for &(neighbor, weight) in neighbors {
+                        if module.contains(neighbor) {
+                            internal_weight += weight;
+                        }
+                    }
+                }
+            }
+            
+            // Avoid double counting for undirected graphs
+            if !network.is_directed() {
+                internal_weight /= 2.0;
+            }
+            
+            let expected = (total_degree * total_degree) / (4.0 * total_weight);
+            (internal_weight / total_weight) - expected / total_weight
+        })
+        .sum()
 }
 
 #[cfg(test)]
