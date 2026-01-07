@@ -9,6 +9,7 @@ use oslom_core::{
 #[pyclass]
 pub struct PyOslom {
     config: OslomConfig,
+    directed: bool,
     result: Option<OslomResult>,
 }
 
@@ -47,13 +48,14 @@ impl PyOslom {
 
         Self {
             config,
+            directed,
             result: None,
         }
     }
 
     fn fit(&mut self, edges: Vec<(usize, usize, f64)>) -> PyResult<()> {
         // Build network from edge list
-        let mut builder = NetworkBuilder::new(self.config.verbose); // Use verbose flag as directed for now
+        let mut builder = NetworkBuilder::new(self.directed);
         
         for (from, to, weight) in edges {
             builder.add_edge(from, to, weight);
@@ -103,6 +105,7 @@ impl PyOslom {
     fn get_config(&self) -> PyResult<HashMap<String, PyObject>> {
         Python::with_gil(|py| {
             let mut config = HashMap::new();
+            config.insert("directed".to_string(), self.directed.into_py(py));
             config.insert("r".to_string(), self.config.r.into_py(py));
             config.insert("hr".to_string(), self.config.hr.into_py(py));
             config.insert("threshold".to_string(), self.config.threshold.into_py(py));
@@ -115,8 +118,8 @@ impl PyOslom {
     }
 
     fn __repr__(&self) -> String {
-        format!("PyOslom(r={}, hr={}, threshold={}, cp={})", 
-                self.config.r, self.config.hr, self.config.threshold, self.config.cp)
+        format!("PyOslom(directed={}, r={}, hr={}, threshold={}, cp={})", 
+                self.directed, self.config.r, self.config.hr, self.config.threshold, self.config.cp)
     }
 }
 
