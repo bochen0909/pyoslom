@@ -1,0 +1,22 @@
+[package]
+name = "oslom-core"
+version = "0.2.0"
+edition = "2021"
+description = "Core OSLOM algorithm implementation in Rust"
+license = "MIT"
+authors = ["Bo Chen <bochen0909@gmail.com>"]
+
+[dependencies]
+petgraph = { workspace = true }
+ndarray = { workspace = true }
+rand = { workspace = true }
+rayon = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "oslom_benchmark"
+harness = false

@@ -1,34 +1,42 @@
 [tool.poetry]
 name = "pyoslom"
-version = "0.1.6"
-description = "Python Wrapper for OSLOM"
+version = "0.2.0"
+description = "Python Wrapper for OSLOM - Rust Implementation"
 authors = ["Bo Chen <bochen0909@gmail.com>"]
 maintainers = ["Bo Chen <bochen0909@gmail.com>"]
 repository = "https://github.com/bochen0909/pyoslom"
 readme = "README.md"
 license = "MIT"
-include = ['cpp']
+include = ['cpp', 'rust']
 
 [tool.poetry.dependencies]
-python = "^3.10"
-scikit-learn = "^1.5.0"
-pybind11 = "^2.12.0"
-networkx = "^3.3"
-wheel = "^0.43.0"
+python = "^3.8"
+scikit-learn = "^1.0.0"
+networkx = "^2.5"
+numpy = "^1.20.0"
 
 [tool.poetry.scripts]
 test = 'scripts:test'
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+maturin = "^1.0.0"
+
+# Support both C++ (legacy) and Rust builds
 [tool.poetry.build]
 script = "build.py"
 generate-setup-file = true
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.4"
+# Rust build configuration (preferred)
+[tool.maturin]
+python-source = "src"
+module-name = "pyoslom._rust"
+manifest-path = "rust/oslom-python/Cargo.toml"
 
 [build-system]
 requires = [
     "poetry-core>=1.0.0",
+    "maturin>=1.0,<2.0",
     "setuptools>=65.4.1",
     "wheel>=0.43.0",
     "pybind11>=2.12.0"
