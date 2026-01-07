@@ -22,7 +22,7 @@ except ImportError:
     set_verbose = None
 
 
-class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
+class RustOSLOM(ClusterMixin, BaseEstimator):
     """
     Rust-based OSLOM implementation with scikit-learn compatible interface.
     
@@ -264,16 +264,32 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         """
         Return the clustering result.
         
+        For OSLOM, transform doesn't process new data but returns the 
+        clustering result from the fitted data. This maintains backward
+        compatibility with the original implementation.
+        
         Parameters
         ----------
-        X : Ignored
-            Not used, present here for API consistency by convention.
+        X : None
+            Must be None. OSLOM doesn't transform new data.
             
         Returns
         -------
         dict
             Clustering result with hierarchical modules and statistics.
+            
+        Raises
+        ------
+        ValueError
+            If X is not None or if the model hasn't been fitted yet.
         """
+        if X is not None:
+            raise ValueError(
+                "OSLOM.transform() does not accept new data. "
+                "It returns the clustering result from fitted data. "
+                "Call with X=None or no arguments."
+            )
+            
         if not self._is_fitted:
             raise ValueError(
                 "This RustOSLOM instance is not fitted yet. Call 'fit' first."
