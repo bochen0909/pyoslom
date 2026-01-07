@@ -7,7 +7,7 @@ license = "MIT"
 authors = ["Bo Chen <bochen0909@gmail.com>"]
 
 [lib]
-name = "oslom_rust"
+name = "_rust"
 crate-type = ["cdylib"]
 
 [dependencies]

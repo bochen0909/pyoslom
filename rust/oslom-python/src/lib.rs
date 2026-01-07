@@ -171,7 +171,7 @@ fn set_verbose(verbose: bool) {
 }
 
 #[pymodule]
-fn oslom_rust(_py: Python, m: &PyModule) -> PyResult<()> {
+fn _rust(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<PyOslom>()?;
     m.add_function(wrap_pyfunction!(run_oslom_direct, m)?)?;
     m.add_function(wrap_pyfunction!(set_verbose, m)?)?;

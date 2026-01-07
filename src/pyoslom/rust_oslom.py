@@ -139,8 +139,7 @@ class RustOSLOM(ClusterMixin, BaseEstimator):
         self._validate_graph_type(X)
 
         # Convert NetworkX graph to edge list
-        edges = self._extract_edges(X)
-        node_mapping = self._create_node_mapping(X)
+        edges, node_mapping = self._extract_edges(X)
 
         if self.verbose:
             print(f"Processing graph with {X.number_of_nodes()} nodes "
@@ -214,31 +213,38 @@ class RustOSLOM(ClusterMixin, BaseEstimator):
         else:
             raise ValueError("Invalid graph type")
 
+    def _create_node_mapping(self, X):
+        """Create mapping from node IDs to integer indices."""
+        nodes = list(X.nodes())
+        return {node: idx for idx, node in enumerate(nodes)}
+
     def _extract_edges(self, X):
-        """Extract edges from NetworkX graph."""
+        """Extract edges from NetworkX graph with integer node mapping."""
+        node_mapping = self._create_node_mapping(X)
         edges = []
         for u, v, data in X.edges(data=True):
             weight = data.get('weight', 1.0)
-            edges.append((u, v, weight))
-        return edges
-
-    def _create_node_mapping(self, X):
-        """Create mapping from node IDs to indices."""
-        return {node: idx for idx, node in enumerate(X.nodes())}
+            u_idx = node_mapping[u]
+            v_idx = node_mapping[v]
+            edges.append((u_idx, v_idx, weight))
+        return edges, node_mapping
 
     def _create_labels(self, clusters, node_mapping, X):
         """Create sklearn-compatible cluster labels."""
         if not clusters:
             return np.full(X.number_of_nodes(), -1)
             
+        # Create reverse mapping from index to original node ID
+        idx_to_node = {idx: node for node, idx in node_mapping.items()}
+        
         # Use base level (level 0) clusters
         base_clusters = clusters.get(0, {})
         labels = np.full(X.number_of_nodes(), -1)
         
-        for cluster_id, nodes in base_clusters.items():
-            for node in nodes:
-                if node in node_mapping:
-                    labels[node_mapping[node]] = cluster_id
+        for cluster_id, node_indices in base_clusters.items():
+            for node_idx in node_indices:
+                if node_idx < len(labels):
+                    labels[node_idx] = cluster_id
                     
         return labels
 
