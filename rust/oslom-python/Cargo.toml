@@ -1,6 +1,6 @@
 [package]
-name = "oslom-python"
-version = "0.2.0"
+name = "pyoslom"
+version = "0.3.0"
 edition = "2021"
 description = "Python bindings for OSLOM algorithm"
 license = "MIT"

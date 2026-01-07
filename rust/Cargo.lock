@@ -406,16 +406,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "oslom-python"
-version = "0.2.0"
-dependencies = [
- "numpy",
- "oslom-core",
- "pyo3",
- "thiserror",
-]
-
-[[package]]
 name = "parking_lot"
 version = "0.12.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -561,6 +551,16 @@ dependencies = [
  "pyo3-build-config",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "pyoslom"
+version = "0.3.0"
+dependencies = [
+ "numpy",
+ "oslom-core",
+ "pyo3",
+ "thiserror",
 ]
 
 [[package]]
