@@ -1,0 +1,17 @@
+[package]
+name = "oslom-python"
+version = "0.2.0"
+edition = "2021"
+description = "Python bindings for OSLOM algorithm"
+license = "MIT"
+authors = ["Bo Chen <bochen0909@gmail.com>"]
+
+[lib]
+name = "_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+oslom-core = { path = "../oslom-core" }
+pyo3 = { workspace = true }
+numpy = { workspace = true }
+thiserror = { workspace = true }

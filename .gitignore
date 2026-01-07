@@ -11,3 +11,25 @@ pyfeaca.egg-info/
 *.pyd
 *.o
 .DS_Store
+
+# Rust build artifacts
+rust/target/
+rust/Cargo.lock
+*.rlib
+*.rmeta
+*.dylib
+*.d
+
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+src/rust/target/
