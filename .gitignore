@@ -32,3 +32,4 @@ env/
 
 # OS
 Thumbs.db
+src/rust/target/
