@@ -7,31 +7,19 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin, ClusterMixin
 from networkx import Graph, DiGraph
 import networkx as nx
-import tempfile
-import shutil
-import os
 
 try:
-    from pyoslom._rust import PyOslom as RustOslom, run_oslom_direct, set_verbose
+    from pyoslom._rust import (
+        PyOslom as RustOslom, 
+        run_oslom_direct, 
+        set_verbose
+    )
     RUST_AVAILABLE = True
 except ImportError:
     RUST_AVAILABLE = False
     RustOslom = None
     run_oslom_direct = None
     set_verbose = None
-
-
-class TempDir:
-    def __init__(self):
-        self.dirpath = None
-
-    def __enter__(self):
-        self.dirpath = tempfile.mkdtemp()
-        return self.dirpath
-
-    def __exit__(self, type, value, traceback):
-        if self.dirpath is not None:
-            shutil.rmtree(self.dirpath)
 
 
 class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
@@ -59,6 +47,16 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         Random seed for reproducibility
     verbose : bool, default=False
         Verbosity mode
+    
+    Attributes
+    ----------
+    cluster_ : dict
+        Clustering result with hierarchical modules and statistics.
+        Available after calling fit().
+    labels_ : ndarray of shape (n_samples,)
+        Cluster labels for each point. Available after calling fit().
+    n_clusters_ : int
+        Number of clusters found. Available after calling fit().
     """
 
     def __init__(
@@ -75,7 +73,7 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         if not RUST_AVAILABLE:
             raise ImportError(
                 "Rust OSLOM implementation not available. "
-                "Please install with: pip install pyoslom[rust] or build from source."
+                "Please install with: pip install pyoslom or build from source."
             )
 
         self.directed = directed
@@ -87,19 +85,27 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         self.random_state = random_state
         self.verbose = verbose
         
+        # sklearn-compatible attributes
         self.cluster_ = None
+        self.labels_ = None
+        self.n_clusters_ = None
         self._is_fitted = False
         
         # Initialize Rust OSLOM instance
+        self._rust_oslom = None
+        self._create_rust_instance()
+
+    def _create_rust_instance(self):
+        """Create or recreate the Rust OSLOM instance."""
         self._rust_oslom = RustOslom(
-            directed=directed,
+            directed=self.directed,
             r=self.r,
             hr=self.hr,
             threshold=self.T,
             cp=self.cp,
-            find_singletons=singlet,
-            random_seed=random_state,
-            verbose=verbose,
+            find_singletons=self.singlet,
+            random_seed=self.random_state,
+            verbose=self.verbose,
         )
 
     def fit(self, X, y=None):
@@ -108,7 +114,8 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         
         Parameters
         ----------
-        X : {networkx Graph, networkx DiGraph, ndarray, sparse matrix} of shape (n_samples, n_samples)
+        X : {networkx Graph, networkx DiGraph, ndarray, sparse matrix} 
+            of shape (n_samples, n_samples)
             Training instances to cluster.
         y : Ignored
             Not used, present here for API consistency by convention.
@@ -118,26 +125,86 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         self
             Fitted estimator.
         """
+        # Reset state
         self.cluster_ = None
+        self.labels_ = None
+        self.n_clusters_ = None
         self._is_fitted = False
         
         # Convert input to NetworkX graph if needed
-        if not isinstance(X, Graph) and not isinstance(X, DiGraph):
-            if len(X.shape) != 2 or X.shape[0] != X.shape[1]:
-                raise ValueError("Input must be a symmetric matrix")
-                
-            if isinstance(X, np.ndarray):
-                if self.directed:
-                    X = nx.convert_matrix.from_numpy_array(X, create_using=nx.DiGraph)
-                else:
-                    X = nx.convert_matrix.from_numpy_array(X, create_using=nx.Graph)
-            else:
-                if self.directed:
-                    X = nx.convert_matrix.from_scipy_sparse_array(X, create_using=nx.DiGraph)
-                else:
-                    X = nx.convert_matrix.from_scipy_sparse_array(X, create_using=nx.Graph)
+        if not isinstance(X, (Graph, DiGraph)):
+            X = self._convert_to_networkx(X)
 
         # Validate graph type
+        self._validate_graph_type(X)
+
+        # Convert NetworkX graph to edge list
+        edges = self._extract_edges(X)
+        node_mapping = self._create_node_mapping(X)
+
+        if self.verbose:
+            print(f"Processing graph with {X.number_of_nodes()} nodes "
+                  f"and {X.number_of_edges()} edges")
+
+        # Run Rust OSLOM
+        try:
+            self._rust_oslom.fit(edges)
+            clusters = self._rust_oslom.get_clusters()
+            statistics = self._rust_oslom.get_statistics()
+            
+            # Convert to format compatible with original implementation
+            self.cluster_ = {
+                "multilevel": True,
+                "num_level": int(statistics["num_levels"]),
+                "max_level": max(clusters.keys()) if clusters else 0,
+                "params": self._get_params_list(),
+                "clusters": clusters,
+                "statistics": statistics,
+            }
+            
+            # Create sklearn-compatible labels
+            self.labels_ = self._create_labels(clusters, node_mapping, X)
+            self.n_clusters_ = len(set(self.labels_)) - (1 if -1 in self.labels_ else 0)
+            
+            self._is_fitted = True
+            
+            if self.verbose:
+                print(f"Found {statistics['num_modules']} modules at base level")
+                print(f"Modularity: {statistics['modularity']:.4f}")
+                print(f"Coverage: {statistics['coverage']}/"
+                      f"{statistics['total_nodes']} nodes")
+                
+        except Exception as e:
+            raise RuntimeError(f"OSLOM clustering failed: {e}")
+
+        return self
+
+    def _convert_to_networkx(self, X):
+        """Convert matrix input to NetworkX graph."""
+        if len(X.shape) != 2 or X.shape[0] != X.shape[1]:
+            raise ValueError("Input must be a symmetric matrix")
+            
+        if isinstance(X, np.ndarray):
+            if self.directed:
+                return nx.convert_matrix.from_numpy_array(
+                    X, create_using=nx.DiGraph
+                )
+            else:
+                return nx.convert_matrix.from_numpy_array(
+                    X, create_using=nx.Graph
+                )
+        else:
+            if self.directed:
+                return nx.convert_matrix.from_scipy_sparse_array(
+                    X, create_using=nx.DiGraph
+                )
+            else:
+                return nx.convert_matrix.from_scipy_sparse_array(
+                    X, create_using=nx.Graph
+                )
+
+    def _validate_graph_type(self, X):
+        """Validate that graph type matches directed parameter."""
         if isinstance(X, Graph) and not isinstance(X, DiGraph):
             if self.directed:
                 raise ValueError("Undirected graph provided but directed=True")
@@ -147,43 +214,51 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
         else:
             raise ValueError("Invalid graph type")
 
-        # Convert NetworkX graph to edge list
+    def _extract_edges(self, X):
+        """Extract edges from NetworkX graph."""
         edges = []
         for u, v, data in X.edges(data=True):
             weight = data.get('weight', 1.0)
             edges.append((u, v, weight))
+        return edges
 
-        if self.verbose:
-            print(f"Processing graph with {X.number_of_nodes()} nodes and {X.number_of_edges()} edges")
+    def _create_node_mapping(self, X):
+        """Create mapping from node IDs to indices."""
+        return {node: idx for idx, node in enumerate(X.nodes())}
 
-        # Run Rust OSLOM
-        try:
-            self._rust_oslom.fit(edges)
-            clusters = self._rust_oslom.get_clusters()
-            statistics = self._rust_oslom.get_statistics()
+    def _create_labels(self, clusters, node_mapping, X):
+        """Create sklearn-compatible cluster labels."""
+        if not clusters:
+            return np.full(X.number_of_nodes(), -1)
             
-            # Convert to format compatible with original implementation
-            result = {
-                "multilevel": True,
-                "num_level": int(statistics["num_levels"]),
-                "max_level": max(clusters.keys()) if clusters else 0,
-                "params": self._get_params_list(),
-                "clusters": clusters,
-                "statistics": statistics,
-            }
-            
-            self.cluster_ = result
-            self._is_fitted = True
-            
-            if self.verbose:
-                print(f"Found {statistics['num_modules']} modules at base level")
-                print(f"Modularity: {statistics['modularity']:.4f}")
-                print(f"Coverage: {statistics['coverage']}/{statistics['total_nodes']} nodes")
-                
-        except Exception as e:
-            raise RuntimeError(f"OSLOM clustering failed: {e}")
+        # Use base level (level 0) clusters
+        base_clusters = clusters.get(0, {})
+        labels = np.full(X.number_of_nodes(), -1)
+        
+        for cluster_id, nodes in base_clusters.items():
+            for node in nodes:
+                if node in node_mapping:
+                    labels[node_mapping[node]] = cluster_id
+                    
+        return labels
 
-        return self
+    def fit_predict(self, X, y=None):
+        """
+        Compute cluster centers and predict cluster index for each sample.
+        
+        Parameters
+        ----------
+        X : {networkx Graph, networkx DiGraph, ndarray, sparse matrix}
+            Input data.
+        y : Ignored
+            Not used, present here for API consistency by convention.
+            
+        Returns
+        -------
+        labels : ndarray of shape (n_samples,)
+            Index of the cluster each sample belongs to.
+        """
+        return self.fit(X, y).labels_
 
     def transform(self, X=None):
         """
@@ -200,8 +275,28 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
             Clustering result with hierarchical modules and statistics.
         """
         if not self._is_fitted:
-            raise ValueError("This RustOSLOM instance is not fitted yet. Call 'fit' first.")
+            raise ValueError(
+                "This RustOSLOM instance is not fitted yet. Call 'fit' first."
+            )
         return self.cluster_
+
+    def fit_transform(self, X, y=None):
+        """
+        Fit the model and return the clustering result.
+        
+        Parameters
+        ----------
+        X : {networkx Graph, networkx DiGraph, ndarray, sparse matrix}
+            Input data.
+        y : Ignored
+            Not used, present here for API consistency by convention.
+            
+        Returns
+        -------
+        dict
+            Clustering result with hierarchical modules and statistics.
+        """
+        return self.fit(X, y).transform()
 
     def _get_params_list(self):
         """Get parameters in list format for compatibility."""
@@ -233,30 +328,33 @@ class RustOSLOM(TransformerMixin, ClusterMixin, BaseEstimator):
 
     def set_params(self, **params):
         """Set the parameters of this estimator."""
+        valid_params = {
+            'directed', 'r', 'hr', 'T', 'singlet', 'cp', 
+            'random_state', 'verbose'
+        }
+        
         for key, value in params.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-            else:
+            if key not in valid_params:
                 raise ValueError(f"Invalid parameter {key}")
+            setattr(self, key, value)
+        
+        # Apply defaults for None values
+        self.r = self.r if self.r is not None else 10
+        self.hr = self.hr if self.hr is not None else 50
+        self.T = self.T if self.T is not None else 0.1
+        self.cp = self.cp if self.cp is not None else 0.5
         
         # Recreate Rust instance with new parameters
-        self._rust_oslom = RustOslom(
-            directed=self.directed,
-            r=self.r,
-            hr=self.hr,
-            threshold=self.T,
-            cp=self.cp,
-            find_singletons=self.singlet,
-            random_seed=self.random_state,
-            verbose=self.verbose,
-        )
+        self._create_rust_instance()
         
         return self
 
     def __repr__(self):
-        return (f"RustOSLOM(directed={self.directed}, r={self.r}, hr={self.hr}, "
-                f"T={self.T}, cp={self.cp}, singlet={self.singlet}, "
-                f"random_state={self.random_state}, verbose={self.verbose})")
+        return (
+            f"RustOSLOM(directed={self.directed}, r={self.r}, hr={self.hr}, "
+            f"T={self.T}, cp={self.cp}, singlet={self.singlet}, "
+            f"random_state={self.random_state}, verbose={self.verbose})"
+        )
 
 
 # Convenience function for direct usage

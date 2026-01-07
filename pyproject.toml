@@ -1,17 +1,13 @@
-[project]
+[tool.poetry]
 name = "pyoslom"
 version = "0.3.0"
 description = "Python Wrapper for OSLOM - Rust Implementation"
-authors = [{name = "Bo Chen", email = "bochen0909@gmail.com"}]
-maintainers = [{name = "Bo Chen", email = "bochen0909@gmail.com"}]
+authors = ["Bo Chen <bochen0909@gmail.com>"]
+maintainers = ["Bo Chen <bochen0909@gmail.com>"]
 readme = "README.md"
-license = {text = "MIT"}
-requires-python = ">=3.8"
-dependencies = [
-    "scikit-learn>=1.0.0",
-    "networkx>=2.5",
-    "numpy>=1.20.0",
-]
+license = "MIT"
+homepage = "https://github.com/bochen0909/pyoslom"
+repository = "https://github.com/bochen0909/pyoslom"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
@@ -27,19 +23,18 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 
-[project.urls]
-Homepage = "https://github.com/bochen0909/pyoslom"
-Repository = "https://github.com/bochen0909/pyoslom"
-Issues = "https://github.com/bochen0909/pyoslom/issues"
+[tool.poetry.dependencies]
+python = ">=3.8"
+scikit-learn = ">=1.0.0"
+networkx = ">=2.5"
+numpy = ">=1.20.0"
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0.0",
-    "maturin>=1.0.0",
-]
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0.0"
+maturin = ">=1.0.0"
 
 [build-system]
-requires = ["maturin>=1.0,<2.0"]
+requires = ["poetry-core", "maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [tool.maturin]
