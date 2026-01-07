@@ -42,6 +42,9 @@ python-source = "src"
 module-name = "pyoslom._rust"
 manifest-path = "rust/oslom-python/Cargo.toml"
 
+[tool.poetry.scripts]
+test = "pytest"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
